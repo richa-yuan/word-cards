@@ -1,0 +1,736 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080, initial-scale=1">
+<title>玩具单词卡 · 竖屏演绎 1080×1920</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23fff3e6'/%3E%3Ccircle cx='32' cy='30' r='15' fill='%23ff4b5c'/%3E%3Crect x='22' y='44' width='20' height='6' rx='3' fill='%23ffa21f'/%3E%3C/svg%3E">
+<style>
+  @font-face{
+    font-family:'Nunito';
+    src:url('assets/fonts/nunito-var.woff2') format('woff2');
+    font-weight:500 900;
+    font-style:normal;
+    font-display:block;
+  }
+
+  :root{
+    --paper:#ffffff;
+    --bg:#fff6e8;
+    --ink:#12151c;
+    --ink-2:#39414f;
+    --muted:#8a93a5;
+    --line:rgba(18,21,28,.12);
+    --green:#00a98f;
+    --green-deep:#0b7f6c;
+    --sage:#fff1f3;
+    --sage-deep:#ffe3e7;
+    --hl:#ff4b5c;
+    --acc:#ff4b5c;
+    --acc-soft:rgba(255,75,92,.16);
+    --coral:#ff4b5c;
+    --amber:#ffa21f;
+    --teal:#00b39b;
+    --blue:#2d6bff;
+    --violet:#9b51e0;
+    --font-en:'Nunito', ui-rounded, -apple-system, 'Segoe UI', sans-serif;
+    --font-zh:-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+    --font-serif:-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:1080px;height:1920px;overflow:hidden}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font-zh);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .frame{
+    position:relative;
+    width:1080px;
+    height:1920px;
+    overflow:hidden;
+    background:
+      radial-gradient(760px 520px at 88% 6%, rgba(255,162,31,.30), transparent 66%),
+      radial-gradient(720px 520px at 6% 22%, rgba(45,107,255,.16), transparent 68%),
+      radial-gradient(900px 620px at 50% 104%, rgba(0,179,155,.16), transparent 64%),
+      radial-gradient(620px 460px at 18% 76%, rgba(155,81,224,.13), transparent 70%),
+      linear-gradient(168deg,#fff8ea 0%,#fff1f2 42%,#eef5ff 74%,#eafaf4 100%);
+  }
+  .frame::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    opacity:.5;
+    background-image:radial-gradient(rgba(18,21,28,.14) 1.2px, transparent 1.2px);
+    background-size:44px 44px;
+    -webkit-mask-image:radial-gradient(900px 900px at 50% 46%, #000 0%, transparent 82%);
+    mask-image:radial-gradient(900px 900px at 50% 46%, #000 0%, transparent 82%);
+  }
+
+  /* ---------- brand ---------- */
+  .brand{
+    position:absolute;top:104px;left:0;right:0;
+    text-align:center;
+  }
+  .brand .sprig{display:none}
+  .brand h1{
+    font-family:var(--font-zh);
+    font-size:52px;
+    font-weight:800;
+    letter-spacing:.08em;
+    color:var(--ink);
+  }
+  .brand .sub{
+    display:inline-block;
+    margin-top:16px;
+    padding:9px 22px;
+    border-radius:999px;
+    background:var(--ink);
+    font-family:var(--font-en);
+    font-size:17px;
+    font-weight:900;
+    letter-spacing:.24em;
+    text-transform:uppercase;
+    color:#fff;
+  }
+  .brand .sub .dot{color:var(--amber);margin:0 10px}
+
+  /* ---------- stage ---------- */
+  .stage{position:absolute;top:300px;left:62px;width:956px;height:846px}
+  .stage-card{
+    position:absolute;
+    inset:0;
+    background:#fff;
+    border:3px solid var(--ink);
+    border-radius:40px;
+    box-shadow:0 16px 0 -6px var(--acc), 0 48px 80px -44px rgba(18,21,28,.55);
+    padding:34px 44px 26px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    transform-origin:50% 50%;
+    will-change:transform,opacity;
+  }
+  .card-no{
+    position:absolute;top:24px;left:32px;
+    font-family:var(--font-en);
+    font-size:20px;font-weight:900;letter-spacing:.1em;
+    color:#fff;background:var(--acc);
+    padding:7px 15px;border-radius:999px;
+  }
+  .speaker{
+    position:absolute;top:22px;right:28px;
+    display:flex;align-items:center;gap:9px;
+    padding:9px 17px 9px 13px;
+    border-radius:999px;
+    background:var(--acc);
+    border:none;
+    color:#fff;
+    font-family:var(--font-en);
+    font-size:16px;font-weight:900;letter-spacing:.12em;
+    box-shadow:0 10px 20px -10px var(--acc);
+  }
+  .speaker svg{width:24px;height:24px;display:block}
+  .speaker .wave{opacity:0}
+
+  .art{
+    height:356px;
+    display:flex;align-items:center;justify-content:center;
+    margin-top:10px;
+    will-change:transform;
+  }
+  .art img{
+    width:348px;height:348px;object-fit:contain;
+  }
+  .word{
+    font-family:var(--font-en);
+    font-size:96px;
+    font-weight:900;
+    letter-spacing:-.02em;
+    line-height:1.06;
+    color:var(--ink);
+    white-space:nowrap;
+    padding:0 22px 8px;
+    border-radius:10px;
+    background:linear-gradient(180deg,transparent 66%,var(--acc-soft) 66%);
+    transform-origin:50% 50%;
+    will-change:transform,opacity;
+  }
+  .ipa{
+    margin-top:6px;
+    font-family:var(--font-en);
+    font-size:34px;font-weight:800;letter-spacing:.01em;
+    color:#6b7587;
+    will-change:transform,opacity;
+  }
+  .rule{
+    width:200px;height:4px;
+    margin:16px 0 14px;
+    border-radius:3px;
+    background:var(--acc);
+    position:relative;
+    will-change:transform,opacity;
+  }
+  .rule::after{display:none}
+  .zh{
+    font-family:var(--font-zh);
+    font-size:58px;font-weight:800;letter-spacing:.1em;
+    color:var(--ink);
+    will-change:transform,opacity;
+  }
+  .ex{
+    margin-top:18px;
+    text-align:center;
+    max-width:820px;
+    will-change:transform,opacity;
+  }
+  .ex-en{
+    font-family:var(--font-en);
+    font-size:33px;font-weight:700;line-height:1.4;
+    color:#2b3242;
+  }
+  .ex-zh{
+    margin-top:9px;
+    font-size:26px;line-height:1.5;letter-spacing:.05em;
+    color:#7b8494;
+  }
+
+  /* ---------- meter ---------- */
+  .meter{position:absolute;top:1180px;left:0;right:0;text-align:center}
+  .ticks{display:flex;justify-content:center;gap:7px}
+  .tick{
+    width:30px;height:9px;border-radius:5px;
+    background:rgba(18,21,28,.13);
+    will-change:transform,background,opacity;
+  }
+  .count{
+    margin-top:14px;
+    font-family:var(--font-en);
+    font-size:22px;font-weight:900;letter-spacing:.26em;
+    color:#6f7889;
+  }
+
+  /* ---------- film strip ---------- */
+  .strip-wrap{
+    position:absolute;top:1318px;left:0;right:0;height:258px;
+    overflow:hidden;
+    -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 74px,#000 1006px,transparent 100%);
+    mask-image:linear-gradient(90deg,transparent 0,#000 74px,#000 1006px,transparent 100%);
+  }
+  .strip{
+    position:absolute;top:0;left:50px;
+    display:flex;gap:20px;
+    will-change:transform;
+  }
+  .mini{
+    position:relative;
+    flex:0 0 auto;
+    width:180px;height:250px;
+    border-radius:26px;
+    background:#fff;
+    border:2px solid rgba(18,21,28,.12);
+    box-shadow:0 16px 26px -22px rgba(18,21,28,.55);
+    padding-top:14px;
+    text-align:center;
+    will-change:transform,opacity;
+  }
+  .mini img{width:104px;height:104px;object-fit:contain}
+  .mini .m-word{
+    margin-top:12px;
+    font-family:var(--font-en);
+    font-size:23px;font-weight:900;line-height:1.1;
+    color:var(--ink);
+    white-space:nowrap;
+    transform-origin:50% 50%;
+  }
+  .mini .m-ipa{
+    margin-top:5px;
+    font-family:var(--font-en);
+    font-size:15px;font-weight:700;
+    color:#949cad;
+    white-space:nowrap;
+    transform-origin:50% 50%;
+  }
+  .mini .m-no{
+    position:absolute;top:9px;left:13px;
+    font-family:var(--font-en);
+    font-size:13px;font-weight:900;letter-spacing:.1em;
+    color:#c2c8d4;
+  }
+  .mini .m-body{
+    display:flex;flex-direction:column;align-items:center;
+    will-change:opacity;
+  }
+  .mini.lifted{
+    background:
+      repeating-linear-gradient(135deg, rgba(18,21,28,.05) 0 6px, transparent 6px 12px),
+      #fbfbfd;
+    border:2px dashed rgba(18,21,28,.35);
+    box-shadow:none;
+  }
+  .mini.active:not(.lifted){
+    border-color:var(--acc);
+    box-shadow:0 0 0 4px var(--acc-soft), 0 22px 34px -24px rgba(18,21,28,.55);
+    background:#fff;
+  }
+
+  /* ---------- footer ---------- */
+  .footer{
+    position:absolute;top:1690px;left:0;right:0;
+    text-align:center;
+    font-family:var(--font-en);
+    font-size:19px;font-weight:900;letter-spacing:.3em;
+    text-transform:uppercase;
+    color:#98a1b0;
+  }
+
+  /* tap ripple */
+  .tap{
+    position:absolute;
+    width:120px;height:120px;margin:-60px 0 0 -60px;
+    border-radius:50%;
+    border:3px solid rgba(158,203,122,.85);
+    opacity:0;
+    will-change:transform,opacity;
+    pointer-events:none;
+  }
+  .tap .dot{
+    position:absolute;left:50%;top:50%;
+    width:18px;height:18px;margin:-9px 0 0 -9px;
+    border-radius:50%;
+    background:rgba(61,90,52,.55);
+  }
+
+  /* ---------- title / end cards ---------- */
+  .title-card{
+    position:absolute;inset:0;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;
+    will-change:transform,opacity;
+  }
+  .title-card .kicker{
+    padding:11px 26px;
+    border-radius:999px;
+    background:#fff;
+    border:2px solid var(--ink);
+    font-family:var(--font-zh);
+    font-size:24px;font-weight:700;letter-spacing:.16em;
+    color:var(--ink);
+  }
+  .title-card .big{
+    margin-top:30px;
+    font-family:var(--font-zh);
+    font-size:132px;font-weight:800;letter-spacing:.04em;
+    line-height:1.12;
+    color:var(--ink);
+  }
+  .title-card .big em{
+    font-style:normal;
+    background:linear-gradient(96deg,#ff4b5c 0%,#ff8a1f 52%,#ffb300 100%);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:transparent;
+  }
+  .title-card .line{
+    margin:32px auto 28px;
+    width:150px;height:5px;border-radius:3px;
+    background:linear-gradient(90deg,var(--coral),var(--amber));
+  }
+  .title-card .desc{
+    font-size:34px;font-weight:600;line-height:1.8;letter-spacing:.08em;
+    color:#4b5464;
+  }
+  .title-card .chips{
+    margin-top:38px;
+    display:flex;gap:14px;justify-content:center;flex-wrap:wrap;
+    max-width:820px;
+  }
+  .title-card .chip{
+    font-family:var(--font-en);
+    font-size:23px;font-weight:900;
+    padding:12px 24px;border-radius:999px;
+    background:#fff;
+    border:2px solid var(--ink);
+    color:var(--ink);
+  }
+  .title-card .chip:nth-child(1){box-shadow:0 7px 0 -1px var(--coral);border-color:var(--coral);color:#e2384a}
+  .title-card .chip:nth-child(2){box-shadow:0 7px 0 -1px var(--blue);border-color:var(--blue);color:#2258db}
+  .title-card .chip:nth-child(3){box-shadow:0 7px 0 -1px var(--teal);border-color:var(--teal);color:#008a78}
+
+  /* end: word board */
+  .end-board{
+    margin-top:34px;
+    display:grid;
+    grid-template-columns:repeat(4,178px);
+    gap:12px 14px;
+  }
+  .end-board span{
+    font-family:var(--font-en);
+    font-size:24px;font-weight:900;
+    padding:14px 6px;border-radius:16px;
+    background:#fff;
+    border:2px solid rgba(18,21,28,.12);
+    color:var(--ink);
+    white-space:nowrap;
+    transform-origin:50% 50%;
+  }
+  .end-head{
+    font-family:var(--font-zh);
+    font-size:80px;font-weight:800;letter-spacing:.08em;
+    color:var(--ink);
+  }
+  .end-sub{
+    display:inline-block;
+    margin-top:20px;
+    padding:9px 20px;border-radius:999px;
+    background:var(--ink);
+    font-family:var(--font-en);
+    font-size:19px;font-weight:900;letter-spacing:.26em;
+    text-transform:uppercase;
+    color:#fff;
+  }
+</style>
+</head>
+<body>
+<div class="frame" id="frame">
+
+  <header class="brand">
+    <h1>玩具单词卡</h1>
+    <p class="sub">Toy Box<span class="dot">·</span>Play &amp; Learn</p>
+  </header>
+
+  <section class="stage">
+    <div class="stage-card" id="card">
+      <span class="card-no" id="cardNo">01</span>
+      <span class="speaker" id="speaker">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 9v6h4l5 4V5L8 9H4z"/>
+          <path class="wave" d="M17 8.5a5 5 0 0 1 0 7"/>
+          <path class="wave" d="M20 6a9 9 0 0 1 0 12"/>
+        </svg>
+        <span id="speakerLabel"> Listen</span>
+      </span>
+      <div class="art" id="art"><img id="artImg" alt=""></div>
+      <div class="word" id="word">teddy bear</div>
+      <div class="ipa" id="ipa">/ˈtedi ber/</div>
+      <div class="rule" id="rule"></div>
+      <div class="zh" id="zh">泰迪熊</div>
+      <div class="ex" id="ex">
+        <p class="ex-en" id="exEn">She hugs her teddy bear every night.</p>
+        <p class="ex-zh" id="exZh">她每晚都抱着她的泰迪熊。</p>
+      </div>
+    </div>
+
+    <div class="title-card" id="intro">
+      <p class="kicker">看图 · 听音 · 跟读</p>
+      <p class="big">玩具<em>单词</em></p>
+      <div class="line"></div>
+      <p class="desc">每张卡片停 3 秒<br>实物写真 · 音标 · 例句</p>
+      <div class="chips"><span class="chip">teddy bear</span><span class="chip">robot</span><span class="chip">kite</span></div>
+    </div>
+
+    <div class="title-card" id="outro" style="opacity:0">
+      <p class="end-head">全部打卡</p>
+      <p class="end-sub">See You Next Time</p>
+      <div class="end-board" id="endBoard"></div>
+    </div>
+  </section>
+
+  <div class="meter">
+    <div class="ticks" id="ticks"></div>
+    <p class="count" id="count">00 / 24</p>
+  </div>
+
+  <div class="strip-wrap">
+    <div class="strip" id="strip"></div>
+  </div>
+
+  <p class="footer">Toy Box · 每日单词卡</p>
+
+  <div class="tap" id="tap"><span class="dot"></span></div>
+</div>
+
+<script src="assets/data.js"></script>
+<script>
+/* ------------------------------------------------------------------
+   Deterministic 9:16 render scene.
+   Everything is a pure function of time: window.seek(t) sets the exact
+   frame state, so frame capture is reproducible and frame-accurate.
+------------------------------------------------------------------- */
+const W = 1080, H = 1920;
+const INTRO = 3.4;          // 片头
+const DWELL = 3.0;          // 每张卡片停留 3 秒
+const FADE_IN = 0.46;       // 卡片被"点开"的行程
+const FADE_OUT = 0.40;      // 卡片放回影集条
+const N = DATA.length;
+const CARDS_START = INTRO;
+const CARDS_END = INTRO + N * DWELL;
+const OUTRO_LEN = 4.2;
+const TOTAL = CARDS_END + OUTRO_LEN;
+
+/* stage / strip geometry (kept in sync with the CSS above) */
+const STAGE = { left: 62, top: 300, w: 956, h: 846 };
+const STAGE_CX = STAGE.left + STAGE.w / 2;
+const STAGE_CY = STAGE.top + STAGE.h / 2;
+const SLOT = 200;           // 180 card + 20 gap
+const STRIP_LEFT = 50;
+const STRIP_TOP = 1318;
+const STRIP_CY = STRIP_TOP + 125;
+const MINI_W = 180;
+const VISIBLE = 5;
+
+const $ = id => document.getElementById(id);
+const card = $('card'), artImg = $('artImg'), art = $('art');
+const wordEl = $('word'), ipaEl = $('ipa'), zhEl = $('zh'), ruleEl = $('rule');
+const exEl = $('ex'), exEn = $('exEn'), exZh = $('exZh'), cardNo = $('cardNo');
+const speaker = $('speaker'), waves = speaker.querySelectorAll('.wave');
+const introEl = $('intro'), outroEl = $('outro');
+const stripEl = $('strip'), ticksEl = $('ticks'), countEl = $('count'), tapEl = $('tap');
+const frameEl = $('frame'), meterEl = document.querySelector('.meter');
+
+/* one accent per card keeps every frame distinct without changing the layout */
+const ACCENTS = [
+  { c:'#ff4b5c', s:'rgba(255,75,92,.16)' },
+  { c:'#ffa21f', s:'rgba(255,162,31,.20)' },
+  { c:'#00b39b', s:'rgba(0,179,155,.16)' },
+  { c:'#2d6bff', s:'rgba(45,107,255,.14)' },
+  { c:'#9b51e0', s:'rgba(155,81,224,.16)' }
+];
+const accentOf = i => ACCENTS[i % ACCENTS.length];
+
+/* ---------- film strip: a circular deck, so the active slot is always centred ---------- */
+const PAD = 2;                       /* cloned slots on each end */
+const slots = [];                    /* {el, body, word, idx} */
+for (let k = 0; k < N + PAD * 2; k++){
+  const idx = ((k - PAD) % N + N) % N;
+  const d = DATA[idx];
+  const el = document.createElement('div');
+  el.className = 'mini';
+  el.innerHTML = `<span class="m-no">${pad(idx + 1)}</span>
+    <div class="m-body">
+      <img src="${d.img}" alt="" decoding="sync">
+      <p class="m-word">${d.name}</p>
+      <p class="m-ipa">${d.ipa}</p>
+    </div>`;
+  stripEl.appendChild(el);
+  slots.push({ el, body: el.querySelector('.m-body'), word: el.querySelector('.m-word'), idx });
+}
+
+/* fit any label that would overflow its slot; safe to re-run once webfonts load */
+function fitAll(){
+  slots.forEach(s => {
+    s.word.style.transform = 'none';
+    const k = Math.min(1, 150 / s.word.offsetWidth);
+    if (k < 1) s.word.style.transform = `scale(${k.toFixed(3)})`;
+  });
+  if (lastIdx >= 0) fitWord();
+}
+let wordScale = 1;
+function fitWord(){
+  const prev = wordEl.style.transform;
+  wordEl.style.transform = 'none';
+  wordScale = Math.min(1, 820 / wordEl.offsetWidth);
+  wordEl.style.transform = prev;
+}
+window.__fit = fitAll;
+
+/* build the 24 ticks */
+const ticks = DATA.map(() => {
+  const t = document.createElement('i');
+  t.className = 'tick';
+  ticksEl.appendChild(t);
+  return t;
+});
+
+/* end board */
+$('endBoard').innerHTML = DATA.map(d => `<span${d.name.length > 8 ? ' style="font-size:16px"' : ''}>${d.name}</span>`).join('');
+
+function pad(n){ return String(n).padStart(2, '0'); }
+const clamp = (v, a = 0, b = 1) => v < a ? a : v > b ? b : v;
+const lerp = (a, b, t) => a + (b - a) * t;
+const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+const easeInCubic = t => t * t * t;
+const easeInOut = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+function easeOutBack(t){ const c1 = 1.36, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); }
+
+/* the deck scrolls one slot per card; the active slot (i + PAD) always sits centred */
+function offsetFor(i){ return i * SLOT; }
+function slotCx(k, off){ return STRIP_LEFT + k * SLOT + MINI_W / 2 - off; }
+const ACTIVE_CX = STRIP_LEFT + PAD * SLOT + MINI_W / 2;
+
+let lastIdx = -1;
+
+function setContent(i){
+  const d = DATA[i];
+  const a = accentOf(i);
+  frameEl.style.setProperty('--acc', a.c);
+  frameEl.style.setProperty('--acc-soft', a.s);
+  artImg.src = d.img;
+  artImg.alt = d.name;
+  wordEl.textContent = d.name;
+  fitWord();
+  ipaEl.textContent = d.ipa;
+  zhEl.textContent = d.zh;
+  exEn.textContent = d.example;
+  exZh.textContent = d.exampleZh;
+  cardNo.textContent = pad(i + 1);
+}
+
+/* generic reveal helper: progress of a window [a,b] in seconds */
+function reveal(u, a, b, lift = 26){
+  const p = easeOutCubic(clamp((u - a) / (b - a)));
+  return { o: p, y: (1 - p) * lift };
+}
+/* reveal that also fades back out with the card */
+function slot(u, a, b, out, lift){
+  const r = reveal(u, a, b, lift);
+  r.o = r.o * (1 - out);
+  return r;
+}
+function paint(el, r){
+  el.style.opacity = r.o.toFixed(3);
+  el.style.transform = `translateY(${r.y.toFixed(2)}px)` + (r.extra || '');
+}
+
+/* one place that paints the whole deck: `held` = how far the active card has left its slot */
+function paintDeck(i, off, held){
+  setStrip(off);
+  const activeK = i + PAD;
+  slots.forEach((s, k) => {
+    const isActive = k === activeK;
+    s.el.classList.toggle('active', isActive);
+    s.el.classList.toggle('lifted', isActive && held > 0.35);
+    const body = isActive ? 1 - clamp(held / 0.5) : 1;
+    const d = Math.abs(k - activeK);
+    const dim = clamp(1 - d * 0.3, 0.16, 1);
+    s.body.style.opacity = (body * dim).toFixed(3);
+    s.el.style.transform = isActive
+      ? `scale(${lerp(0.955, 1.035, body).toFixed(4)})`
+      : 'none';
+  });
+}
+
+function seek(t){
+  t = clamp(t, 0, TOTAL);
+
+  if (t < CARDS_START) return seekIntro(t);
+  if (t < CARDS_END)   return seekCard((t - CARDS_START) / DWELL | 0, (t - CARDS_START) % DWELL);
+  return seekOutro(t - CARDS_END);
+}
+
+function seekIntro(t){
+  card.style.opacity = '0';
+  const p = easeOutCubic(clamp(t / 0.7));
+  introEl.style.opacity = p.toFixed(3);
+  introEl.style.transform = `translateY(${((1 - p) * 22).toFixed(2)}px)`;
+  outroEl.style.opacity = '0';
+  paintDeck(0, 0, 0);
+  ticks.forEach(tk => { tk.style.background = 'rgba(18,21,28,.13)'; });
+  /* the word count stays off screen while the opening title is up */
+  meterEl.style.opacity = '0';
+  /* the very first tap lands just before the deck starts */
+  const u = t - (INTRO - 0.72);
+  if (u > 0) drawTap(clamp(u / 0.62), ACTIVE_CX, STRIP_CY);
+  else tapEl.style.opacity = '0';
+}
+
+function seekOutro(u){
+  card.style.opacity = '0';
+  introEl.style.opacity = '0';
+  const p = easeOutCubic(clamp(u / 0.7));
+  outroEl.style.opacity = p.toFixed(3);
+  outroEl.style.transform = `translateY(${((1 - p) * 24).toFixed(2)}px)`;
+  tapEl.style.opacity = '0';
+  paintDeck(N - 1, offsetFor(N - 1), 0);
+  ticks.forEach(tk => { tk.style.background = 'rgba(18,21,28,.62)'; });
+  meterEl.style.opacity = '0';
+  /* word board fills in row by row */
+  const cells = $('endBoard').children;
+  for (let j = 0; j < cells.length; j++){
+    const q = easeOutCubic(clamp((u - 0.55 - j * 0.045) / 0.5));
+    cells[j].style.opacity = q.toFixed(3);
+    cells[j].style.transform = `translateY(${((1 - q) * 14).toFixed(2)}px)`;
+  }
+}
+
+function seekCard(i, u){
+  introEl.style.opacity = '0';
+  outroEl.style.opacity = '0';
+
+  if (i !== lastIdx){ setContent(i); lastIdx = i; }
+
+  const p = easeOutCubic(clamp(u / FADE_IN));           // 从卡槽取出、放大到舞台
+  const qRaw = clamp((u - (DWELL - FADE_OUT)) / FADE_OUT);
+  const q = easeInCubic(qRaw);                          // 放回卡槽
+
+  /* the deck advances one slot during the first half second of the segment */
+  const from = i > 0 ? offsetFor(i - 1) : offsetFor(0);
+  const off = lerp(from, offsetFor(i), easeInOut(clamp(u / 0.5)));
+  const cx = STRIP_LEFT + (i + PAD) * SLOT + MINI_W / 2 - off;
+
+  /* flight: from its slot on the deck to the centre of the stage */
+  const scale = lerp(MINI_W / STAGE.w, 1, p) * lerp(1, 0.93, q);
+  const dx = (cx - STAGE_CX) * (1 - p);
+  const dy = (STRIP_CY - STAGE_CY) * (1 - p);
+  card.style.opacity = (clamp(u / 0.14) * (1 - qRaw)).toFixed(3);
+  card.style.transform = `translate(${dx.toFixed(2)}px, ${dy.toFixed(2)}px) scale(${scale.toFixed(4)})`;
+
+  art.style.transform = `scale(${lerp(0.86, 1, easeOutBack(clamp((u - 0.1) / 0.55))).toFixed(4)})`;
+
+  /* the word and its spelling ride along with the card, the rest lands after */
+  paint(wordEl, Object.assign(slot(u, 0.06, 0.44, qRaw), { extra: ` scale(${wordScale.toFixed(3)})` }));
+  paint(ipaEl,  slot(u, 0.16, 0.54, qRaw));
+  ruleEl.style.opacity = (clamp((u - 0.5) / 0.3) * (1 - qRaw)).toFixed(3);
+  ruleEl.style.transform = `scaleX(${lerp(0.3, 1, easeOutCubic(clamp((u - 0.5) / 0.4)))})`;
+  paint(zhEl,   slot(u, 0.52, 0.88, qRaw, 20));
+  paint(exEn,   slot(u, 0.72, 1.06, qRaw, 20));
+  paint(exZh,   slot(u, 0.86, 1.2, qRaw, 20));
+  cardNo.style.opacity = (clamp((u - 0.12) / 0.3) * (1 - qRaw)).toFixed(3);
+
+  /* reading pill pulses while the word is being spoken */
+  const speaking = u > 0.42 && u < 2.5;
+  speaker.style.opacity = speaking ? (1 - qRaw).toFixed(3) : '0';
+  speaker.style.transform = `translateY(${(speaking ? 0 : 10)}px)`;
+  const beat = speaking ? (0.4 + 0.6 * Math.abs(Math.sin((u - 0.42) * 4.2))) : 0;
+  waves.forEach((w, k) => { w.style.opacity = (clamp(beat - k * 0.25) * (speaking ? 1 : 0)).toFixed(3); });
+
+  /* the slot stays empty while the card is out, and refills as it lands back */
+  const held = Math.min(p, 1 - clamp((qRaw - 0.45) / 0.55));
+  paintDeck(i, off, held);
+
+  /* ticks */
+  const acc = accentOf(i).c;
+  ticks.forEach((tk, j) => {
+    if (j < i)        tk.style.background = 'rgba(18,21,28,.55)';
+    else if (j === i) tk.style.background = acc;
+    else              tk.style.background = 'rgba(18,21,28,.13)';
+  });
+  meterEl.style.opacity = '1';
+  countEl.textContent = `${pad(i + 1)} / ${N}`;
+
+  /* the click */
+  if (u < 0.62) drawTap(clamp(u / 0.62), cx, STRIP_CY);
+  else tapEl.style.opacity = '0';
+}
+
+function drawTap(p, x, y){
+  tapEl.style.left = x.toFixed(1) + 'px';
+  tapEl.style.top = y.toFixed(1) + 'px';
+  tapEl.style.opacity = (p < 0.15 ? p / 0.15 : clamp(1 - (p - 0.15) / 0.85) * 0.9).toFixed(3);
+  tapEl.style.transform = `scale(${lerp(0.35, 1.25, easeOutCubic(p)).toFixed(3)})`;
+  tapEl.firstChild.style.opacity = clamp(1 - p * 1.6).toFixed(3);
+}
+
+function setStrip(off){
+  stripEl.style.transform = `translateX(${(-off).toFixed(2)}px)`;
+}
+
+window.seek = seek;
+window.SCENE = { TOTAL, INTRO, DWELL, CARDS_END, N };
+seek(0);
+</script>
+</body>
+</html>
