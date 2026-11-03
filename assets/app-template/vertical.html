@@ -53,10 +53,11 @@
     height:1920px;
     overflow:hidden;
     background:
-      radial-gradient(760px 520px at 88% 6%, rgba(255,162,31,.30), transparent 66%),
-      radial-gradient(720px 520px at 6% 22%, rgba(45,107,255,.16), transparent 68%),
-      radial-gradient(900px 620px at 50% 104%, rgba(0,179,155,.16), transparent 64%),
-      radial-gradient(620px 460px at 18% 76%, rgba(155,81,224,.13), transparent 70%),
+      radial-gradient(1150px 760px at 50% 52%, transparent 58%, rgba(18,21,28,.055) 100%),
+      radial-gradient(760px 520px at 88% 6%, rgba(255,162,31,.34), transparent 66%),
+      radial-gradient(720px 520px at 6% 22%, rgba(45,107,255,.18), transparent 68%),
+      radial-gradient(900px 620px at 50% 104%, rgba(0,179,155,.18), transparent 64%),
+      radial-gradient(620px 460px at 18% 76%, rgba(155,81,224,.14), transparent 70%),
       linear-gradient(168deg,#fff8ea 0%,#fff1f2 42%,#eef5ff 74%,#eafaf4 100%);
   }
   .frame::after{
@@ -87,17 +88,16 @@
   .brand .sub{
     display:inline-block;
     margin-top:16px;
-    padding:9px 22px;
+    padding:9px 26px;
     border-radius:999px;
     background:var(--ink);
-    font-family:var(--font-en);
-    font-size:17px;
-    font-weight:900;
-    letter-spacing:.24em;
-    text-transform:uppercase;
+    font-family:var(--font-zh);
+    font-size:18px;
+    font-weight:700;
+    letter-spacing:.22em;
     color:#fff;
   }
-  .brand .sub .dot{color:var(--amber);margin:0 10px}
+  .brand .sub .dot{color:var(--amber);margin:0 8px}
 
   /* ---------- stage ---------- */
   .stage{position:absolute;top:300px;left:62px;width:956px;height:846px}
@@ -293,7 +293,7 @@
     position:absolute;
     width:120px;height:120px;margin:-60px 0 0 -60px;
     border-radius:50%;
-    border:3px solid rgba(158,203,122,.85);
+    border:3px solid var(--acc);
     opacity:0;
     will-change:transform,opacity;
     pointer-events:none;
@@ -302,7 +302,7 @@
     position:absolute;left:50%;top:50%;
     width:18px;height:18px;margin:-9px 0 0 -9px;
     border-radius:50%;
-    background:rgba(61,90,52,.55);
+    background:var(--acc);
   }
 
   /* ---------- title / end cards ---------- */
@@ -324,15 +324,26 @@
   .title-card .big{
     margin-top:30px;
     font-family:var(--font-zh);
-    font-size:132px;font-weight:800;letter-spacing:.04em;
-    line-height:1.12;
+    font-size:118px;font-weight:800;letter-spacing:.04em;
+    line-height:1.22;
     color:var(--ink);
+  }
+  .title-card .big .l1,
+  .title-card .big .l2{
+    display:inline-block;
+    will-change:transform,opacity;
   }
   .title-card .big em{
     font-style:normal;
     background:linear-gradient(96deg,#ff4b5c 0%,#ff8a1f 52%,#ffb300 100%);
     -webkit-background-clip:text;background-clip:text;
     -webkit-text-fill-color:transparent;color:transparent;
+  }
+  .title-card .float{
+    position:absolute;
+    border-radius:50%;
+    opacity:0;
+    will-change:transform,opacity;
   }
   .title-card .line{
     margin:32px auto 28px;
@@ -360,38 +371,96 @@
   .title-card .chip:nth-child(2){box-shadow:0 7px 0 -1px var(--blue);border-color:var(--blue);color:#2258db}
   .title-card .chip:nth-child(3){box-shadow:0 7px 0 -1px var(--teal);border-color:var(--teal);color:#008a78}
 
-  /* end: word board */
-  .end-board{
-    margin-top:34px;
-    display:grid;
-    grid-template-columns:repeat(4,178px);
-    gap:12px 14px;
-  }
-  .end-board span{
-    font-family:var(--font-en);
-    font-size:24px;font-weight:900;
-    padding:14px 6px;border-radius:16px;
-    background:#fff;
-    border:2px solid rgba(18,21,28,.12);
-    color:var(--ink);
-    white-space:nowrap;
-    transform-origin:50% 50%;
-  }
-  .end-head{
-    font-family:var(--font-zh);
-    font-size:80px;font-weight:800;letter-spacing:.08em;
-    color:var(--ink);
-  }
-  .end-sub{
+  /* end: account CTA (@喜悦学英语) */
+  .outro-badge{
     display:inline-block;
-    margin-top:20px;
-    padding:9px 20px;border-radius:999px;
-    background:var(--ink);
-    font-family:var(--font-en);
-    font-size:19px;font-weight:900;letter-spacing:.26em;
-    text-transform:uppercase;
-    color:#fff;
+    padding:11px 26px;
+    border-radius:999px;
+    background:#fff;
+    border:2px solid var(--ink);
+    font-family:var(--font-zh);
+    font-size:24px;font-weight:700;letter-spacing:.16em;
+    color:var(--ink);
+    will-change:transform,opacity;
   }
+  .avatar-wrap{
+    position:relative;
+    margin-top:46px;
+    width:212px;height:212px;
+    will-change:transform,opacity;
+    filter:drop-shadow(0 26px 44px -20px rgba(18,21,28,.5));
+  }
+  .avatar-ring{
+    position:absolute;inset:-16px;
+    border-radius:50%;
+    background:conic-gradient(from 0deg,var(--coral),var(--amber),var(--teal),var(--blue),var(--violet),var(--coral));
+    -webkit-mask:radial-gradient(circle at 50% 50%, transparent 0 109px, #000 110px 122px, transparent 123px);
+    mask:radial-gradient(circle at 50% 50%, transparent 0 109px, #000 110px 122px, transparent 123px);
+    will-change:transform;
+  }
+  .avatar{
+    position:absolute;inset:0;
+    width:212px;height:212px;
+    object-fit:cover;
+    border-radius:50%;
+    border:6px solid #fff;
+    background:#fff;
+    display:block;
+  }
+  .avatar-sheen{
+    position:absolute;inset:0;
+    border-radius:50%;
+    overflow:hidden;
+    pointer-events:none;
+  }
+  .avatar-sheen i{
+    position:absolute;top:-30%;bottom:-30%;left:0;
+    width:74px;
+    transform:translateX(-180px) rotate(18deg);
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.8),transparent);
+    will-change:transform,opacity;
+  }
+  .acc-name{
+    margin-top:36px;
+    font-family:var(--font-zh);
+    font-size:64px;font-weight:800;letter-spacing:.04em;
+    color:var(--ink);
+    will-change:transform,opacity;
+  }
+  .acc-slogan{
+    margin-top:18px;
+    font-family:var(--font-zh);
+    font-size:34px;font-weight:700;letter-spacing:.16em;
+    color:#e2384a;
+    will-change:transform,opacity;
+  }
+  .cta-row{
+    margin-top:46px;
+    display:flex;gap:22px;justify-content:center;
+  }
+  .cta{
+    display:flex;align-items:center;gap:11px;
+    padding:16px 30px;
+    border-radius:999px;
+    background:#fff;
+    border:2.5px solid var(--ink);
+    font-family:var(--font-zh);
+    font-size:27px;font-weight:800;letter-spacing:.08em;
+    color:var(--ink);
+    will-change:transform,opacity;
+  }
+  .cta svg{width:30px;height:30px;display:block}
+  .cta-like{box-shadow:0 7px 0 -1px rgba(254,44,85,.75)}
+  .cta-like svg{fill:#fe2c55}
+  .cta-star{box-shadow:0 7px 0 -1px rgba(255,179,0,.8)}
+  .cta-star svg{fill:#ffb300}
+  .cta-follow{
+    background:#fe2c55;
+    border-color:#fe2c55;
+    color:#fff;
+    box-shadow:0 8px 0 -1px rgba(190,24,58,.85);
+  }
+  .cta-follow svg{fill:#fff}
 </style>
 </head>
 <body>
@@ -399,7 +468,7 @@
 
   <header class="brand">
     <h1>玩具单词卡</h1>
-    <p class="sub">Toy Box<span class="dot">·</span>Play &amp; Learn</p>
+    <p class="sub">每天一分钟<span class="dot">·</span>开口学英语</p>
   </header>
 
   <section class="stage">
@@ -425,17 +494,33 @@
     </div>
 
     <div class="title-card" id="intro">
-      <p class="kicker">看图 · 听音 · 跟读</p>
-      <p class="big">玩具<em>单词</em></p>
-      <div class="line"></div>
-      <p class="desc">每张卡片停 3 秒<br>实物写真 · 音标 · 例句</p>
-      <div class="chips"><span class="chip">teddy bear</span><span class="chip">robot</span><span class="chip">kite</span></div>
+      <span class="float" style="left:110px;top:110px;width:56px;height:56px;background:rgba(255,75,92,.20)"></span>
+      <span class="float" style="right:150px;top:210px;width:40px;height:40px;background:rgba(45,107,255,.18)"></span>
+      <span class="float" style="left:200px;bottom:150px;width:34px;height:34px;background:rgba(0,179,155,.20)"></span>
+      <p class="kicker" id="introKicker">今日主题 · 玩具单词</p>
+      <p class="big"><span class="l1" id="introL1">每天<em>一分钟</em></span><br><span class="l2" id="introL2">开口<em>学英语</em></span></p>
+      <div class="line" id="introLine"></div>
+      <p class="desc" id="introDesc">看图 · 听音 · 跟读<br>实物写真 · 音标 · 例句</p>
+      <div class="chips" id="introChips"><span class="chip">teddy bear</span><span class="chip">robot</span><span class="chip">kite</span></div>
     </div>
 
     <div class="title-card" id="outro" style="opacity:0">
-      <p class="end-head">全部打卡</p>
-      <p class="end-sub">See You Next Time</p>
-      <div class="end-board" id="endBoard"></div>
+      <span class="float" style="right:130px;top:130px;width:52px;height:52px;background:rgba(255,162,31,.22)"></span>
+      <span class="float" style="left:150px;top:230px;width:36px;height:36px;background:rgba(155,81,224,.18)"></span>
+      <span class="float" style="right:220px;bottom:170px;width:30px;height:30px;background:rgba(255,75,92,.18)"></span>
+      <p class="outro-badge" id="outroBadge">今日单词 · 打卡完成</p>
+      <div class="avatar-wrap" id="avatarWrap">
+        <div class="avatar-ring" id="avatarRing"></div>
+        <img class="avatar" id="avatarImg" src="assets/img/account-avatar.png" alt="喜悦学英语头像">
+        <div class="avatar-sheen"><i id="sheenBar"></i></div>
+      </div>
+      <p class="acc-name" id="accName">@喜悦学英语</p>
+      <p class="acc-slogan" id="accSlogan">一起开口读英语</p>
+      <div class="cta-row" id="ctaRow">
+        <span class="cta cta-like" id="ctaLike"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>点赞</span>
+        <span class="cta cta-star" id="ctaStar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>收藏</span>
+        <span class="cta cta-follow" id="ctaFollow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6V5z"/></svg>关注</span>
+      </div>
     </div>
   </section>
 
@@ -448,7 +533,7 @@
     <div class="strip" id="strip"></div>
   </div>
 
-  <p class="footer">Toy Box · 每日单词卡</p>
+  <p class="footer">喜悦学英语 · 一起开口读英语</p>
 
   <div class="tap" id="tap"><span class="dot"></span></div>
 </div>
@@ -461,14 +546,14 @@
    frame state, so frame capture is reproducible and frame-accurate.
 ------------------------------------------------------------------- */
 const W = 1080, H = 1920;
-const INTRO = 3.4;          // 片头
+const INTRO = 4.4;          // 片头：口号「每天一分钟，开口学英语」+ 主题徽章
 const DWELL = 3.0;          // 每张卡片停留 3 秒
 const FADE_IN = 0.46;       // 卡片被"点开"的行程
 const FADE_OUT = 0.40;      // 卡片放回影集条
 const N = DATA.length;
 const CARDS_START = INTRO;
 const CARDS_END = INTRO + N * DWELL;
-const OUTRO_LEN = 4.2;
+const OUTRO_LEN = 7.4;      // 片尾：@喜悦学英语 关注动效（含口播，实测口播 6.1s）
 const TOTAL = CARDS_END + OUTRO_LEN;
 
 /* stage / strip geometry (kept in sync with the CSS above) */
@@ -488,6 +573,15 @@ const wordEl = $('word'), ipaEl = $('ipa'), zhEl = $('zh'), ruleEl = $('rule');
 const exEl = $('ex'), exEn = $('exEn'), exZh = $('exZh'), cardNo = $('cardNo');
 const speaker = $('speaker'), waves = speaker.querySelectorAll('.wave');
 const introEl = $('intro'), outroEl = $('outro');
+const introKicker = $('introKicker'), introL1 = $('introL1'), introL2 = $('introL2'),
+      introLine = $('introLine'), introDesc = $('introDesc'), introChips = $('introChips');
+const introFloats = Array.from(document.querySelectorAll('#intro .float'));
+const outroBadge = $('outroBadge'), avatarWrap = $('avatarWrap'),
+      avatarRing = $('avatarRing'), sheenBar = $('sheenBar'),
+      accName = $('accName'), accSlogan = $('accSlogan');
+const ctaEls = [$('ctaLike'), $('ctaStar'), $('ctaFollow')];
+const CTA_T = [1.10, 1.32, 1.54];          // 点赞 / 收藏 / 关注 依次弹入
+const outroFloats = Array.from(document.querySelectorAll('#outro .float'));
 const stripEl = $('strip'), ticksEl = $('ticks'), countEl = $('count'), tapEl = $('tap');
 const frameEl = $('frame'), meterEl = document.querySelector('.meter');
 
@@ -544,9 +638,6 @@ const ticks = DATA.map(() => {
   ticksEl.appendChild(t);
   return t;
 });
-
-/* end board */
-$('endBoard').innerHTML = DATA.map(d => `<span${d.name.length > 8 ? ' style="font-size:16px"' : ''}>${d.name}</span>`).join('');
 
 function pad(n){ return String(n).padStart(2, '0'); }
 const clamp = (v, a = 0, b = 1) => v < a ? a : v > b ? b : v;
@@ -623,14 +714,43 @@ function seek(t){
 
 function seekIntro(t){
   card.style.opacity = '0';
-  const p = easeOutCubic(clamp(t / 0.7));
-  introEl.style.opacity = p.toFixed(3);
-  introEl.style.transform = `translateY(${((1 - p) * 22).toFixed(2)}px)`;
   outroEl.style.opacity = '0';
+  introEl.style.opacity = '1';
+  introEl.style.transform = 'none';
   paintDeck(0, 0, 0);
   ticks.forEach(tk => { tk.style.background = 'rgba(18,21,28,.13)'; });
   /* the word count stays off screen while the opening title is up */
   meterEl.style.opacity = '0';
+
+  /* 节拍一：主题徽章 pop（0.10–0.65） */
+  const k = easeOutBack(clamp((t - 0.10) / 0.55));
+  introKicker.style.opacity = clamp(t / 0.35).toFixed(3);
+  introKicker.style.transform = `scale(${(0.82 + 0.18 * k).toFixed(3)})`;
+  /* 节拍二：口号两行阶梯升入（0.42 / 0.72 起） */
+  const p1 = easeOutCubic(clamp((t - 0.42) / 0.58));
+  introL1.style.opacity = p1.toFixed(3);
+  introL1.style.transform = `translateY(${((1 - p1) * 34).toFixed(2)}px)`;
+  const p2 = easeOutCubic(clamp((t - 0.72) / 0.58));
+  introL2.style.opacity = p2.toFixed(3);
+  introL2.style.transform = `translateY(${((1 - p2) * 34).toFixed(2)}px)`;
+  /* 节拍三：分隔线从中心展开（1.10–1.50） */
+  const pl = clamp((t - 1.10) / 0.40);
+  introLine.style.opacity = pl.toFixed(3);
+  introLine.style.transform = `scaleX(${(0.3 + 0.7 * easeOutCubic(pl)).toFixed(3)})`;
+  /* 节拍四：说明 + 示例词 chips（1.32 / 1.55 起） */
+  const pd = reveal(t, 1.32, 1.80);
+  introDesc.style.opacity = pd.o.toFixed(3);
+  introDesc.style.transform = `translateY(${pd.y.toFixed(2)}px)`;
+  const pc = reveal(t, 1.55, 2.05);
+  introChips.style.opacity = pc.o.toFixed(3);
+  introChips.style.transform = `translateY(${pc.y.toFixed(2)}px)`;
+  /* 漂浮装饰 */
+  introFloats.forEach((el, f) => {
+    el.style.opacity = (0.5 * clamp((t - 0.30) / 0.6)).toFixed(3);
+    el.style.transform =
+      `translateY(${(Math.sin(t * 0.9 + f * 1.7) * 13).toFixed(2)}px) rotate(${(Math.sin(t * 0.6 + f) * 10).toFixed(2)}deg)`;
+  });
+
   /* the very first tap lands just before the deck starts */
   const u = t - (INTRO - 0.72);
   if (u > 0) drawTap(clamp(u / 0.62), ACTIVE_CX, STRIP_CY);
@@ -640,20 +760,57 @@ function seekIntro(t){
 function seekOutro(u){
   card.style.opacity = '0';
   introEl.style.opacity = '0';
-  const p = easeOutCubic(clamp(u / 0.7));
-  outroEl.style.opacity = p.toFixed(3);
-  outroEl.style.transform = `translateY(${((1 - p) * 24).toFixed(2)}px)`;
+  outroEl.style.opacity = '1';
+  outroEl.style.transform = 'none';
   tapEl.style.opacity = '0';
   paintDeck(N - 1, offsetFor(N - 1), 0);
   ticks.forEach(tk => { tk.style.background = 'rgba(18,21,28,.62)'; });
   meterEl.style.opacity = '0';
-  /* word board fills in row by row */
-  const cells = $('endBoard').children;
-  for (let j = 0; j < cells.length; j++){
-    const q = easeOutCubic(clamp((u - 0.55 - j * 0.045) / 0.5));
-    cells[j].style.opacity = q.toFixed(3);
-    cells[j].style.transform = `translateY(${((1 - q) * 14).toFixed(2)}px)`;
-  }
+
+  /* 打卡徽章 pop（0.10–0.65） */
+  const kb = easeOutBack(clamp((u - 0.10) / 0.55));
+  outroBadge.style.opacity = clamp(u / 0.35).toFixed(3);
+  outroBadge.style.transform = `scale(${(0.82 + 0.18 * kb).toFixed(3)})`;
+
+  /* 头像带环弹入（0.28–0.90），落定后光环呼吸 */
+  const ka = easeOutBack(clamp((u - 0.28) / 0.62));
+  avatarWrap.style.opacity = clamp((u - 0.28) / 0.30).toFixed(3);
+  avatarWrap.style.transform = `scale(${(0.55 + 0.45 * ka).toFixed(4)})`;
+  const breathe = clamp((u - 0.95) * 2.5);
+  avatarRing.style.transform =
+    `rotate(${(u * 30).toFixed(1)}deg) scale(${(1 + 0.012 * Math.sin((u - 0.95) * 3) * breathe).toFixed(4)})`;
+
+  /* 头像高光每 2.4s 扫一次（u=1.0 起） */
+  const cyc = (u - 1.0) % 2.4;
+  const sweeping = cyc >= 0 && cyc <= 0.9;
+  sheenBar.style.transform =
+    `translateX(${(sweeping ? lerp(-180, 320, easeInOut(cyc / 0.9)) : -180).toFixed(1)}px) rotate(18deg)`;
+  sheenBar.style.opacity = sweeping ? '1' : '0';
+
+  /* 账号名（0.55 起）与口号（0.80 起） */
+  const pn = easeOutCubic(clamp((u - 0.55) / 0.5));
+  accName.style.opacity = pn.toFixed(3);
+  accName.style.transform = `translateY(${((1 - pn) * 30).toFixed(2)}px)`;
+  const ps = easeOutCubic(clamp((u - 0.80) / 0.5));
+  accSlogan.style.opacity = ps.toFixed(3);
+  accSlogan.style.transform = `translateY(${((1 - ps) * 24).toFixed(2)}px)`;
+
+  /* 点赞 / 收藏 / 关注 依次弹入，落定后轻浮动 */
+  ctaEls.forEach((el, k) => {
+    const t0 = CTA_T[k];
+    const kp = easeOutBack(clamp((u - t0) / 0.55));
+    el.style.opacity = clamp((u - t0) / 0.22).toFixed(3);
+    const settle = Math.max(0, u - (t0 + 0.55));
+    const bob = settle > 0 ? Math.sin(settle * 3.1 + k * 2.1) * 4.5 * clamp(settle * 2.5) : 0;
+    el.style.transform = `translateY(${bob.toFixed(2)}px) scale(${(0.35 + 0.65 * kp).toFixed(4)})`;
+  });
+
+  /* 漂浮装饰 */
+  outroFloats.forEach((el, f) => {
+    el.style.opacity = (0.45 * clamp(u / 0.6)).toFixed(3);
+    el.style.transform =
+      `translateY(${(Math.sin(u * 0.9 + f * 1.7) * 13).toFixed(2)}px) rotate(${(Math.sin(u * 0.6 + f) * 10).toFixed(2)}deg)`;
+  });
 }
 
 function seekCard(i, u){

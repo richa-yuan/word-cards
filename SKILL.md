@@ -58,6 +58,12 @@ say -v Samantha -o /tmp/_say_check.aiff "ok"
 - 视觉：白卡 + 3px 黑描边 + 主色投影底块，单词压在彩色笔刷高亮上，中文加粗；每张卡按索引
   循环换主色（红/橙/青/蓝/紫），进度条同步换色。
 - **片头不出现单词数量**：标题只写主题，品牌条不写数量，进度计数在片头整段隐藏，片尾也不报数。
+- **片头固定口号**：大字两行「每天一分钟 / 开口学英语」分四拍升入，主题徽章「今日主题 · XX」压在顶上，
+  口播由 `--intro-text` 传入（INTRO 4.4s）。品牌条整条视频常驻同一句口号，每帧都在强化记忆点。
+- **片尾账号 CTA 动效**（OUTRO 7.4s，不写期数）：打卡徽章 → 头像弹入（彩色光环旋转 + 高光扫过）→
+  @喜悦学英语 → 「一起开口读英语」→ 点赞 / 收藏 / 关注 三枚抖音样式按钮依次弹入后轻浮动。
+  头像放 `assets/img/account-avatar.png`（方图即可，圆形裁切 + 白边）；换账号名/口号只改
+  `vertical.html` 的 `acc-name`/`acc-slogan` 文案与音频 outro 文本。
 - 视频节奏：每张卡 3.0 秒；配音 = 单词 + 中文，**例句只上屏不朗读**（3 秒读不完，见下）。
 - 配音：Edge 神经语音（`en-US-JennyNeural` + `zh-CN-XiaoxiaoNeural`，英文 -8%、中文 -4% 语速），
   无网时退回 `build_audio.py`（`say`），时间轴完全一致。
@@ -118,14 +124,15 @@ node scripts/verify_app.cjs --url http://127.0.0.1:4317/index.html \
 
 ```bash
 node scripts/render_frames.cjs --url http://127.0.0.1:4317/vertical.html \
-  --out /tmp/vcheck --preview 4.5,20.5,78
+  --out /tmp/vcheck --preview 1.4,3.9,5.2,40,80
 ```
 
 **6. 配音** — Edge 神经语音（默认），逐卡给出占位表；有告警说明该卡在当前 `--dwell` 下放不下：
 
 ```bash
 python3 scripts/build_audio_neural.py --data <项目>/assets/data.js --out /tmp/track.wav \
-  --outro-text "<主题>单词，全部打卡。"
+  --intro-text "每天一分钟，开口学英语。" \
+  --outro-text "<主题>单词，全部打卡。关注喜悦学英语，一起开口读英语。"
 ```
 
 换音色用 `--en-voice` / `--zh-voice`（`edge-tts --list-voices` 可查）；语速用 `--en-rate -8%`。
@@ -152,6 +159,7 @@ bash scripts/encode.sh /tmp/frames /tmp/track.wav "<主题>单词卡-抖音竖�
 - 生成器水印固定在右下角，白底抠图会把它留在切片里；全幅图直接裁底部 64px。
 - 中国样式：文化场景词直接用中国场景提示词；车辆/瓶子类必有乱码小字，生成后放大检查 + 克隆修补。
 - 换词表不清空 `assets/img/` 会留僵尸图；替换主题文案不带断言会静默漏改。
+- 清空 `assets/img/` 时**保留 `account-avatar.png`**，删了它片尾头像就是一张破图。
 - 预览帧抽在 0.1s 会看到卡片起飞半程——这是动画不是 bug，抽 t=卡内 1.6s 判断排版。
 
 ## 交付时要说明的事

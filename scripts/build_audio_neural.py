@@ -7,7 +7,7 @@ instead of macOS `say`, which is far more natural for a kids' clip.
 
   python3 build_audio_neural.py --data assets/data.js --out /tmp/track.wav \
       [--en-voice en-US-JennyNeural] [--zh-voice zh-CN-XiaoxiaoNeural] \
-      [--intro 3.4] [--dwell 3.0] [--outro 4.2] [--outro-text '...']
+      [--intro 4.4] [--dwell 3.0] [--outro 6.2] [--intro-text '...'] [--outro-text '...']
 """
 import argparse, asyncio, math, os, re, struct, subprocess, sys, json
 
@@ -71,6 +71,8 @@ async def main_async(a, words):
             jobs.append((f'zh{i}', zh, a.zh_voice, a.zh_rate))
     if a.outro_text:
         jobs.append(('outro', a.outro_text, a.zh_voice, '-8%'))
+    if a.intro_text:
+        jobs.append(('intro', a.intro_text, a.zh_voice, a.zh_rate))
 
     sem = asyncio.Semaphore(6)
     await asyncio.gather(*[render(t, v, r, f'{tmp}/{k}.mp3', sem) for k, t, v, r in jobs])
@@ -97,6 +99,11 @@ async def main_async(a, words):
                 buf[j] += amp * math.exp(-decay * k / SR) * math.sin(2 * math.pi * freq * k / SR)
 
     tone(a.intro - 0.72, 1400, 0.06, a.click)
+    intro_end = None
+    if a.intro_text:
+        iv = clips['intro']
+        put(iv, a.intro_at, 0.9)
+        intro_end = a.intro_at + len(iv) / SR
     rows, over = [], []
     for i, (en, zh) in enumerate(words):
         base = a.intro + i * a.dwell
@@ -136,6 +143,11 @@ async def main_async(a, words):
         print('%4d  %-21s %4.2f  %5.2f' % r)
     print('timeline: intro %.1fs + %d cards x %.1fs + outro %.1fs = %.1fs'
           % (a.intro, n, a.dwell, a.outro, total))
+    if intro_end is not None:
+        air = a.intro - 0.72 - intro_end
+        print('intro line ends at %.2fs -> %.2fs of air before the deck tap' % (intro_end, air))
+        if air < 0.25:
+            print('WARNING: the intro line runs into the deck tap; shorten it or raise --intro')
     if over:
         print('WARNING: slots nearly fill the dwell:')
         for i, en, used in over:
@@ -150,9 +162,12 @@ if __name__ == '__main__':
     ap = argparse.ArgumentParser()
     ap.add_argument('--data', required=True)
     ap.add_argument('--out', default='track.wav')
-    ap.add_argument('--intro', type=float, default=3.4)
+    ap.add_argument('--intro', type=float, default=4.4)
     ap.add_argument('--dwell', type=float, default=3.0)
-    ap.add_argument('--outro', type=float, default=4.2)
+    ap.add_argument('--outro', type=float, default=7.4)
+    ap.add_argument('--intro-text', default='')
+    ap.add_argument('--intro-at', type=float, default=0.40,
+                    help='when the intro line starts inside the intro')
     ap.add_argument('--en-voice', default='en-US-JennyNeural')
     ap.add_argument('--zh-voice', default='zh-CN-XiaoxiaoNeural')
     ap.add_argument('--en-rate', default='-8%')

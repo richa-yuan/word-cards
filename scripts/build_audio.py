@@ -2,7 +2,8 @@
 """Build the voice/click track for a card video from the app's word list.
 
   python3 build_audio.py --data assets/data.js --out track.wav \
-      [--intro 3.4] [--dwell 3.0] [--en-voice Samantha] [--zh-voice Tingting]
+      [--intro 4.4] [--dwell 3.0] [--en-voice Samantha] [--zh-voice Tingting] \
+      [--intro-text '...'] [--outro-text '...']
 
 `--data` accepts either a JSON array of {name, zh} or the app's data.js
 (lines shaped like `{ name:'celery', ... zh:'芹菜', ... }`).
@@ -48,9 +49,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--data', required=True)
     ap.add_argument('--out', default='track.wav')
-    ap.add_argument('--intro', type=float, default=3.4)
+    ap.add_argument('--intro', type=float, default=4.4)
     ap.add_argument('--dwell', type=float, default=3.0)
-    ap.add_argument('--outro', type=float, default=4.2)
+    ap.add_argument('--outro', type=float, default=7.4)
+    ap.add_argument('--intro-text', default='')
+    ap.add_argument('--intro-at', type=float, default=0.40)
     ap.add_argument('--en-voice', default='Samantha')
     ap.add_argument('--zh-voice', default='Tingting')
     ap.add_argument('--en-rate', type=int, default=172)
@@ -81,6 +84,11 @@ def main():
                 buf[j] += amp * math.exp(-decay * k / SR) * math.sin(2 * math.pi * freq * k / SR)
 
     tone(a.intro - 0.72, 1400, 0.06, a.click)
+    intro_end = None
+    if a.intro_text:
+        iv = say(a.intro_text, a.zh_voice, a.zh_rate)
+        put(iv, a.intro_at, 0.9)
+        intro_end = a.intro_at + len(iv) / SR
     rows, over = [], []
     for i, (en, zh) in enumerate(words):
         base = a.intro + i * a.dwell
@@ -119,6 +127,11 @@ def main():
         print('%4d  %-15s %4.2f  %5.2f' % r)
     print('timeline: intro %.1fs + %d cards x %.1fs + outro %.1fs = %.1fs'
           % (a.intro, n, a.dwell, a.outro, total))
+    if intro_end is not None:
+        air = a.intro - 0.72 - intro_end
+        print('intro line ends at %.2fs -> %.2fs of air before the deck tap' % (intro_end, air))
+        if air < 0.25:
+            print('WARNING: the intro line runs into the deck tap; shorten it or raise --intro')
     if over:
         print('WARNING: these slots nearly fill the dwell (raise --dwell or drop --no-zh):')
         for i, en, used in over:

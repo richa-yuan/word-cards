@@ -4,8 +4,8 @@
 
 1. **网页卡片**：4 列网格，点击弹大图卡，浏览器本地 TTS 朗读 + 音标 + 中文 + 例句，
    `?autoplay=1` 顺序自动播放。零构建，纯静态。
-2. **抖音竖屏视频**：1080×1920 / 30fps，每卡停 3 秒，Edge 神经语音配音（单词+中文），
-   片头不报数，H.264 High / yuv420p(bt709) / AAC，直接可发抖音/小红书。
+2. **抖音竖屏视频**：1080×1920 / 30fps，每卡停 3 秒，Edge 神经语音配音（片头口号 + 单词 + 中文 +
+   片尾关注引导），片头不报数，首尾淡入淡出，H.264 High / yuv420p(bt709) / AAC，直接可发抖音/小红书。
 
 主题不限（四季天气、昆虫、饮品、家电、食物味道、医院、太阳系、动物园、学校……均已跑通），
 语言不限（换例句与配音参数即可）。
@@ -98,7 +98,8 @@ python3 -m http.server 4317 --bind 127.0.0.1 &
 node <skill>/scripts/verify_app.cjs --url http://127.0.0.1:4317/index.html \
   --vertical http://127.0.0.1:4317/vertical.html --expect 24   # 13 项全绿
 python3 <skill>/scripts/build_audio_neural.py --data assets/data.js \
-  --out /tmp/track.wav --outro-text "玩具单词，全部打卡。"
+  --out /tmp/track.wav --intro-text "每天一分钟，开口学英语。" \
+  --outro-text "玩具单词，全部打卡。关注喜悦学英语，一起开口读英语。"
 node <skill>/scripts/render_frames.cjs --url http://127.0.0.1:4317/vertical.html \
   --out /tmp/frames --fps 30 --size 1080x1920 --q 92
 bash <skill>/scripts/encode.sh /tmp/frames /tmp/track.wav "demo.mp4" 30 1080x1920

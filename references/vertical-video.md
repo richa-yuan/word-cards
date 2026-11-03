@@ -27,9 +27,9 @@ calls it once per frame at absolute times, never incrementally.
 ## Timeline math
 
 ```js
-const INTRO = 3.4, DWELL = 3.0, FADE_IN = 0.46, FADE_OUT = 0.40;
+const INTRO = 4.4, DWELL = 3.0, FADE_IN = 0.46, FADE_OUT = 0.40;
 const CARDS_START = INTRO, CARDS_END = INTRO + N * DWELL;
-const OUTRO_LEN = 4.2, TOTAL = CARDS_END + OUTRO_LEN;      // 24 words → 79.6 s
+const OUTRO_LEN = 7.4, TOTAL = CARDS_END + OUTRO_LEN;      // 24 words → 83.8 s
 ```
 
 Card *i* is driven by `u = t - (INTRO + i*DWELL)` in `[0, DWELL)`. Inside `seekCard(i, u)`:
@@ -84,10 +84,21 @@ Set `--acc` / `--acc-soft` on `#frame` inside `setContent(i)`; the card slab, nu
 speaker pill, rule, active mini card and active tick all inherit them. Background is a warm→cool
 pastel gradient with a masked dot grid (no film-grain overlay — it fights photoreal art).
 
-**Opening carries no word count.** The big title is just the theme (「玩具单词」), the brand pill
-says `Toy Box · Play & Learn` without `24 Words`, and the whole `.meter` block (ticks + `00 / 24`)
-is hidden for the entire intro — `meterEl.style.opacity = '0'` in `seekIntro`, back to `'1'` in
-`seekCard`. The outro drops the count too.
+**Opening carries no word count.** The intro is a four-beat reveal of the fixed slogan
+「每天一分钟 / 开口学英语」— kicker theme badge pops, then the two big lines ladder in, then the
+rule expands and desc/chips land (`seekIntro` drives each element separately; the card container
+itself stays at opacity 1). The brand pill under the header keeps the same slogan for the entire
+video, and the whole `.meter` block (ticks + `00 / 24`) is hidden for the intro —
+`meterEl.style.opacity = '0'` in `seekIntro`, back to `'1'` in `seekCard`. The outro drops the
+count too.
+
+**The outro is the account CTA, not a word board** (7.4 s, no episode number): badge
+「今日单词 · 打卡完成」pops, the avatar flies in with a rotating conic ring and a sheen sweep
+every 2.4 s (`assets/img/account-avatar.png`, square source, circular crop + 6 px white rim —
+missing file = broken image in every outro frame), then @喜悦学英语 and 「一起开口读英语」
+rise, and the three Douyin-style buttons — 点赞 (heart `#fe2c55`), 收藏 (star `#ffb300`),
+关注 (filled red pill, white plus) — pop in with `easeOutBack` at 1.10/1.32/1.54 s and idle-bob
+afterwards. Swap the account by editing the outro DOM copy plus the audio `--outro-text`.
 
 Sizes that survived review: word 96 px Nunito 900 on a marker-swipe highlight, Chinese gloss
 58 px weight 800, IPA 34 px, example 33 px, example gloss 26 px, art 348 px with **no
@@ -110,10 +121,10 @@ python3 -m http.server 4317 --bind 127.0.0.1
 
 ```bash
 node scripts/render_frames.cjs --url http://127.0.0.1:4317/vertical.html \
-  --out /tmp/vcheck --preview 0.5,1.8,3.6,40,78
+  --out /tmp/vcheck --preview 1.4,3.9,5.2,40,80
 ```
 
-**2. Capture every frame.** 30 fps × 79.6 s ≈ 2 400 JPEGs; takes a few minutes.
+**2. Capture every frame.** 30 fps × 83.8 s ≈ 2 520 JPEGs; takes a few minutes.
 
 ```bash
 node scripts/render_frames.cjs --url http://127.0.0.1:4317/vertical.html \
@@ -157,6 +168,12 @@ Verify with `ffprobe -v error -show_streams`: expect `yuv420p(tv, bt709/unknown/
 `h264 (High)`, 30 fps, AAC LC 44100 stereo. `encode.sh` prints these lines itself.
 
 ## Audio budget — the constraint that decides the pacing
+
+The intro line (`--intro-text`) starts at `--intro-at` (0.4 s) and must end before the deck tap
+at `INTRO - 0.72`; both audio scripts print the remaining air and warn under 0.25 s — the default
+slogan fits 4.4 s with >1 s of air. The outro line starts 0.6 s into the outro and needs ~0.6 s
+of visual tail; keep it to two short sentences (「<主题>单词，全部打卡。关注喜悦学英语，一起开口
+读英语。」 fits 7.4 s).
 
 `DWELL` is not a taste choice, it is set by how long the voice takes. With 3.0 s per card the
 measured slot is 2.12–2.62 s (word + Chinese gloss, neural voice), which leaves ~0.4–0.9 s of air.
