@@ -108,3 +108,52 @@ $('endBoard').innerHTML = DATA.map(d =>
 批量接口（如 CogView flash）高频触发 HTTP 429：workers 降到 2、脚本自动重试（10s/20s 退避）。
 批跑完**必须核对 `batch_result.json` 的 success 标志**——日志被 `tail` 截断时会漏看失败任务
 （曾漏掉 panda / school 两张）。失败任务逐个补跑，缺图跑 verify_app 会直接红。
+
+## 6. 路线 C：全幅 hero tile（用户要「图片占主要位置 / 吸引眼球」时）
+
+游乐场所、商场这类大场景主题验证过（两项均交付）。照片通栏出血到卡片边缘、占卡片近一半高度，
+文字整体缩小一档退居下方——比路线 A 的 660×372 图像窗更抓眼球。
+
+### vertical.html CSS
+
+```css
+/* .art 改全幅 hero：负 margin 吃掉卡片内边距，出血到卡边 */
+.art{
+  height:412px; align-self:stretch; display:block;
+  margin:-34px -44px 0;                    /* 对应 stage-card 的 padding */
+  border-radius:37px 37px 0 0;             /* 卡片外圆角 40 - 边框 3 */
+  border-bottom:3px solid var(--ink);      /* 照片与文字区的分隔线 */
+  overflow:hidden; will-change:transform;
+}
+.art img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+/* 文字档位（hero 占 412/840 后的余量） */
+.word{ font-size:82px; }                   /* 96 → 82 */
+.ipa{ margin-top:4px; font-size:28px; }    /* 6/34 → 4/28 */
+.rule{ margin:12px 0 10px; }               /* 16/14 → 12/10 */
+.zh{ font-size:52px; line-height:1.3; }    /* 58 → 52 */
+.ex{ margin-top:12px; }                    /* 18 → 12 */
+.ex-en{ font-size:30px; }                  /* 33 → 30 */
+.ex-zh{ margin-top:6px; font-size:23px; }  /* 9/26 → 6/23 */
+.mini img{ width:152px; height:104px; object-fit:cover; border-radius:14px; }
+```
+
+index.html 同路线 A 的 2 处（thumb/modal 改 cover、去 drop-shadow）。JS 与 STAGE 几何不动。
+预算：内容区 780px ≈ hero 412（含 3px 分隔线）+ 文字 357，余 ~11px；例句超两行会顶到底，
+换词时保持例句 ≤ 45 字符。
+
+### 图片源
+
+1440×720（比例 2.0）；hero 窗口约 2.32，cover 纵向裁 ~14%，主体居中提示词即可。
+tile 窗口越大越吃构图：**先按 1:1 中心裁切模拟检查缩略图**（游乐场摩天轮第一版
+轮盘被切在角落，作为首卡与弹窗默认图不合格，重生成居中构图）。
+
+### 场景主题的假字检查（商场/店铺类必做）
+
+- 提示词逐条显式禁文字：「纯色招牌无文字」「车身无徽标贴纸」「包装无可读文字」。
+- 生成后**网格叠加图定位**（100px 网格 + 坐标标注）+ 等高放大拼图逐张过；商场类实测
+  玩具店店招一整条假汉字、面包店深色招牌反而干净。
+- 黑底浅色字：颜色阈值掩膜（gray > 110）+ dilate(7,7)x2 + TELEA inpaint 半径 5，实测干净。
+- **大区块 inpaint 会糊**：碰碰车徽标、海盗船船身大字修补两轮失败后整图重生成更干净；
+  语义不清（电影院生成成酒店走廊）同样是重生成理由。
+- 放行标准：hero 渲染约 0.66x，该尺寸下不可读的小字（货架标签、书脊、包装纹理）不算缺陷。
