@@ -43,6 +43,10 @@ say -v Samantha -o /tmp/_say_check.aiff "ok"
 - **edge-tts** 走网络（微软神经语音）；无网或非 macOS 时退回 `build_audio.py`（macOS `say`，
   时间轴一致，音色降一档）。`say` 自检要写到真实文件，`-o /dev/null` 会误报。
 - 语音合成发音网页用的是**浏览器本地 `speechSynthesis`**，不依赖以上任何服务。
+- **生图有两条路线，走之前必须先问用户**（见工作流第 3 步）：云端 ImageGen，或**本地 Draw Things**
+  （macOS Apple Silicon，App 内置 HTTP API，离线、免费、无需 key）。用 Draw Things 需先在 App 里
+  开启 API Server（Settings → Advanced → API Server：Server Online=ON / Protocol=HTTP /
+  TLS=OFF / IP=127.0.0.1），生图期间 App 必须保持打开。检测：`python3 scripts/draw_things_gen.py --check`。
 
 ## 默认假设（用户没反对就照做，交付时一句话说明）
 
@@ -104,11 +108,30 @@ IPA 用真音标字符（ˈ ˌ ə ɒ ː），别用拼音式重音；音标跟�
 `aria-label`、页脚、弹窗默认内容、竖屏页品牌区、片头与片尾）。**建议**：把两页的主题文案
 集中成一次带断言的 Python 替换（找不到就报错，防止静默漏改）。
 
-**3. 生成插图** — 详见 `references/art-pipeline.md`（白底抠图路线）与
-`references/photo-tile-variant.md`（全幅照片路线）。生成后统一：裁掉右下角生成器水印
-（通常裁底部 60–64px 即可）→ WebP q88 入 `assets/img/` → 联络表（contact sheet）肉眼过一遍
-风格一致性与生成伪影。批量接口常见限流（HTTP 429）：脚本会自动重试，仍失败的任务**逐个补跑**，
-并复查 `batch_result.json` 的 success 标志，别只看日志尾部。
+**3. 生成插图** — **先问用户选哪条生图路线，别默认**：
+
+> "插图用哪种方式生成？① 本地 Draw Things（离线免费，需 App 开着并开启 API Server）
+> ② 云端 ImageGen（需联网、按张计费）"
+
+- **选 Draw Things**（本地路线，详见 `references/draw-things.md`）：
+  1. 先 `python3 scripts/draw_things_gen.py --check` 探活；不通就提示用户在 App 里开 API Server，
+     别往下走。
+  2. 按 `references/art-pipeline.md` 的 2×2 提示词模板写 manifest（`defaults` + `grids`，
+     每张卡一个 `prompt` 或四个 `quadrants`），`steps`/`cfg` 按当前加载的模型来
+     （FLUX schnell：steps=4、cfg=1.0；SDXL/SD1.5：steps≈25、cfg≈7）。模型由 App 当前加载的
+     决定，请求里改不了——先问用户或用 `--check` 输出确认。
+  3. 批量生成网格 PNG：`python3 scripts/draw_things_gen.py --manifest grids.json --out /tmp/dtgrids`。
+     2×2 网格图直接进下一步切片；**Draw Things 输出没有 ImageGen 水印，别裁底部**。
+  4. 切片：`python3 scripts/slice_grid.py --grid /tmp/dtgrids/<grid>.png --names ... --out assets/img`
+     （或先用现有 `slice_grid.py --manifest` 把网格登记好）。
+- **选 ImageGen**（云端路线，默认）：详见 `references/art-pipeline.md`（白底抠图路线）与
+  `references/photo-tile-variant.md`（全幅照片路线）。生成后统一：裁掉右下角生成器水印
+  （通常裁底部 60–64px 即可）→ WebP q88 入 `assets/img/`。批量接口常见限流（HTTP 429）：自动重试，
+  仍失败的任务**逐个补跑**，并复查 `batch_result.json` 的 success 标志，别只看日志尾部。
+
+两条路线最后都要：联络表（contact sheet）肉眼过一遍风格一致性与生成伪影，再往下走。
+**本地 Draw Things 生图完成后照常回到第 4 步验证网页，再走第 5–8 步渲染视频**——生图方式不影响
+后续流程，数据唯一来源始终是 `assets/data.js`。
 
 **4. 跑通网页** — 必须走 HTTP（`file://` 会让字体与截图检查失真）：
 
@@ -185,6 +208,8 @@ bash scripts/encode.sh /tmp/frames /tmp/track.wav "<主题>单词卡-抖音竖�
 - `references/art-pipeline.md` — 白底抠图路线：2×2 提示词模板、硬约束、切片参数、成品质检。
 - `references/photo-tile-variant.md` — 全幅照片 tile 路线：改哪 3 处 CSS、主题文案替换配方、
   生成限流/水印/车辆乱码的实战处理。
+- `references/draw-things.md` — 本地 Draw Things 路线：开启 API Server、manifest 写法、
+  模型/steps/cfg 选择、健康检查与常见坑。
 - `scripts/` — `verify_app.cjs` `render_frames.cjs` `build_audio_neural.py` `build_audio.py`
-  `slice_grid.py` `encode.sh` `_pw.cjs`（依赖解析器）。
+  `slice_grid.py` `draw_things_gen.py`（本地生图，HTTP 直连 7860）`encode.sh` `_pw.cjs`（依赖解析器）。
 - `package.json` — `npm install playwright-core` 用。

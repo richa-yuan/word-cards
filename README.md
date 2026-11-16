@@ -17,17 +17,19 @@ word-cards/
 ├── SKILL.md                      # 技能说明（Agent Skills 格式，YAML frontmatter）
 ├── README.md                     # 本文件：依赖与各工具安装法
 ├── package.json                  # npm install playwright-core 用
-├── scripts/                      # 7 个流水线脚本（node/python/bash，无硬编码路径）
+├── scripts/                      # 8 个流水线脚本（node/python/bash，无硬编码路径）
 │   ├── verify_app.cjs            # 网页 13 项自动检查
 │   ├── render_frames.cjs         # 竖屏帧逐帧捕获（--preview 抽帧预览）
 │   ├── build_audio_neural.py     # Edge 神经语音配音（默认，需网络）
 │   ├── build_audio.py            # macOS say 离线配音回退
 │   ├── slice_grid.py             # 2×2 白底网格 → 透明 WebP 切片
+│   ├── draw_things_gen.py        # 本地 Draw Things 生图（HTTP 直连 7860，离线免费）
 │   ├── encode.sh                 # ffmpeg 编码（色彩空间/规格自动校正）
 │   └── _pw.cjs                   # playwright-core 依赖解析器
-├── references/                   # 深度参考（实现要点、踩坑、两条插图路线）
+├── references/                   # 深度参考（实现要点、踩坑、三条插图路线）
 │   ├── card-app.md  ├── vertical-video.md
-│   ├── art-pipeline.md  └── photo-tile-variant.md
+│   ├── art-pipeline.md  ├── photo-tile-variant.md
+│   └── draw-things.md            # 本地 Draw Things 路线（离线生图）
 └── assets/app-template/          # 可运行的完整模板（24 词玩具示例 + 字体 + 示例图）
     ├── index.html  ├── vertical.html
     └── assets/ (data.js, fonts/, img/)
@@ -43,16 +45,20 @@ word-cards/
 | edge-tts | 神经语音配音 | `pip3 install edge-tts`（需网络） |
 | ffmpeg ≥ 6 | 编码 | brew / apt 均可 |
 | macOS `say`（可选） | 离线配音回退 | 非 macOS 无此回退，但 edge-tts 可用 |
+| Draw Things App（可选） | 本地离线生图 | Apple Silicon + 免费；需 App 开着并在设置里开启 HTTP API Server（见 references/draw-things.md） |
 
-生图本身不在本包内（用的是各 Agent 自带的图像生成工具/接口），提示词模板见 references。
+生图有两条路线，**用前先问用户**：① 云端 ImageGen（各 Agent 自带接口，按张计费、需联网）；
+② 本地 Draw Things（`draw_things_gen.py` 直连本机 API，离线免费）。提示词模板见 references。
 
 ## 安装到各工具
 
 技能本体就是一个文件夹 + 一份 SKILL.md（Agent Skills 通用格式）。按工具三选一：
 
-### ① 原生支持 Skills 的 Agent（ZCode / Claude Code 等）
+### ① 原生支持 Skills 的 Agent（WorkBuddy / ZCode / Claude Code 等）
 
 ```bash
+# WorkBuddy
+cp -R word-cards ~/.workbuddy/skills/word-cards
 # ZCode
 cp -R word-cards ~/.zcode/skills/word-cards
 # Claude Code
@@ -79,7 +85,7 @@ cp -R word-cards ~/skills/word-cards        # 放在固定位置
 参考文档按需读取 ~/skills/word-cards/references/ 下对应文件。
 ```
 
-### ③ DeepSeek / WorkBuddy 等对话式 Agent（无文件系统技能机制）
+### ③ DeepSeek 等纯对话式 Agent（无文件系统技能机制）
 
 两类用法：
 
