@@ -2,9 +2,9 @@
 
 ## Why grids
 
-One ImageGen call per word would cost 24 generations and give 24 slightly different styles.
+One ImageGen call per word would cost 12 generations and give 12 slightly different styles.
 Asking for a **2×2 grid in one image** pins the style across four words for a quarter of the
-cost, because the model paints all four under one style instruction. 24 words = 6 grids.
+cost, because the model paints all four under one style instruction. 12 words = 3 grids.
 
 Grids are consumed and discarded — only the sliced WebPs belong in the project. Keep the raw
 grids in `/tmp` so they can be re-sliced with different parameters without re-generating.

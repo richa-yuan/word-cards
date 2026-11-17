@@ -50,7 +50,7 @@ say -v Samantha -o /tmp/_say_check.aiff "ok"
 
 ## 默认假设（用户没反对就照做，交付时一句话说明）
 
-- 卡片数 24（4 列 × 6 行）或用户指定；字段：单词 / IPA / 中文 / 英文例句 / 中文译文 / 插图。
+- 卡片数 12（4 列 × 3 行）或用户指定；字段：单词 / IPA / 中文 / 英文例句 / 中文译文 / 插图。
 - 插图三条路线（见 `references/art-pipeline.md` 与 `references/photo-tile-variant.md`）：
   1. **写实产品摄影风 + 白底抠图**（默认）：无缝纯白背景、柔光、无投影，2×2 网格批量生成后
      切片为透明 WebP（512 画布，44px 内边距）——适合**实体物品**（玩具、昆虫、水果）。
@@ -89,7 +89,7 @@ cp -R assets/app-template/. <项目目录>/
 ```
 
 `index.html`（网页）与 `vertical.html`（竖屏演绎）已就绪，都从 `assets/data.js` 读 `DATA`。
-模板自带完整的 24 词玩具示例（写实插画 + 配套 WebP + 视觉），复制后立刻能跑通第 4 步验证——
+模板自带完整的 12 词玩具示例（写实插画 + 配套 WebP + 视觉），复制后立刻能跑通第 4 步验证——
 先确认环境没问题，再换成用户的词表。换词表时清空 `assets/img/`，否则旧图会残留成僵尸文件。
 
 **2. 写数据** — 用用户的词表重写 `assets/data.js`（字段照模板抄）：
@@ -164,7 +164,7 @@ python3 scripts/build_audio_neural.py --data <项目>/assets/data.js --out /tmp/
 无网络时退回离线方案：`python3 scripts/build_audio.py --data ... --out /tmp/track.wav --outro-text "..."`。
 脚本会报出配音实际结束点和剩余视觉留白，留白不足 0.6 秒会告警——收尾句宁可短，也别贴着片尾。
 
-**7. 全量捕获 + 编码**（24 卡 ≈ 2 分钟捕获；视频约 80 秒 / 18MB）：
+**7. 全量捕获 + 编码**（12 卡 ≈ 1 分钟捕获；视频约 48 秒 / 11MB）：
 
 ```bash
 node scripts/render_frames.cjs --url http://127.0.0.1:4317/vertical.html \
@@ -201,7 +201,7 @@ bash scripts/encode.sh /tmp/frames /tmp/track.wav "<主题>单词卡-抖音竖�
 ## Resources
 
 - `assets/app-template/` — 可运行的完整模板（index.html 网页、vertical.html 竖屏场景、
-  assets/data.js 24 词示例、assets/fonts 自托管字体、示例图）。复制即用。
+  assets/data.js 12 词示例、assets/fonts 自托管字体、示例图）。复制即用。
 - `references/card-app.md` — 数据契约、响应式断点、TTS/FLIP/自动播放实现要点与已知坑。
 - `references/vertical-video.md` — `seek(t)` 场景契约、时间轴数学、视觉规范、抖音安全区、
   编码参数、音频预算。

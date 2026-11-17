@@ -30,7 +30,7 @@ word-cards/
 │   ├── card-app.md  ├── vertical-video.md
 │   ├── art-pipeline.md  ├── photo-tile-variant.md
 │   └── draw-things.md            # 本地 Draw Things 路线（离线生图）
-└── assets/app-template/          # 可运行的完整模板（24 词玩具示例 + 字体 + 示例图）
+└── assets/app-template/          # 可运行的完整模板（12 词玩具示例 + 字体 + 示例图）
     ├── index.html  ├── vertical.html
     └── assets/ (data.js, fonts/, img/)
 ```
@@ -102,7 +102,7 @@ cp -R word-cards ~/skills/word-cards        # 放在固定位置
 cp -R word-cards/assets/app-template/. demo/ && cd demo
 python3 -m http.server 4317 --bind 127.0.0.1 &
 node <skill>/scripts/verify_app.cjs --url http://127.0.0.1:4317/index.html \
-  --vertical http://127.0.0.1:4317/vertical.html --expect 24   # 13 项全绿
+  --vertical http://127.0.0.1:4317/vertical.html --expect 12   # 13 项全绿
 python3 <skill>/scripts/build_audio_neural.py --data assets/data.js \
   --out /tmp/track.wav --intro-text "每天一分钟，开口学英语。" \
   --outro-text "玩具单词，全部打卡。关注喜悦学英语，一起开口读英语。"

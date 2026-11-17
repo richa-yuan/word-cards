@@ -29,7 +29,7 @@ calls it once per frame at absolute times, never incrementally.
 ```js
 const INTRO = 4.4, DWELL = 3.0, FADE_IN = 0.46, FADE_OUT = 0.40;
 const CARDS_START = INTRO, CARDS_END = INTRO + N * DWELL;
-const OUTRO_LEN = 7.4, TOTAL = CARDS_END + OUTRO_LEN;      // 24 words → 83.8 s
+const OUTRO_LEN = 7.4, TOTAL = CARDS_END + OUTRO_LEN;      // 12 words → 47.8 s
 ```
 
 Card *i* is driven by `u = t - (INTRO + i*DWELL)` in `[0, DWELL)`. Inside `seekCard(i, u)`:
@@ -88,7 +88,7 @@ pastel gradient with a masked dot grid (no film-grain overlay — it fights phot
 「每天一分钟 / 开口学英语」— kicker theme badge pops, then the two big lines ladder in, then the
 rule expands and desc/chips land (`seekIntro` drives each element separately; the card container
 itself stays at opacity 1). The brand pill under the header keeps the same slogan for the entire
-video, and the whole `.meter` block (ticks + `00 / 24`) is hidden for the intro —
+video, and the whole `.meter` block (ticks + `00 / 12`) is hidden for the intro —
 `meterEl.style.opacity = '0'` in `seekIntro`, back to `'1'` in `seekCard`. The outro drops the
 count too.
 
@@ -179,7 +179,7 @@ of visual tail; keep it to two short sentences (「<主题>单词，全部打卡
 measured slot is 2.12–2.62 s (word + Chinese gloss, neural voice), which leaves ~0.4–0.9 s of air.
 The English
 example sentence is **on screen but un-narrated** — reading it needs 4.5–5 s per card, i.e. a
-90–120 s video for 24 words. If the user wants the sentences spoken, raise `DWELL` in
+66–72 s video for 12 words. If the user wants the sentences spoken, raise `DWELL` in
 `vertical.html` **and** pass the same value to `build_audio.py --dwell`, then re-capture; the
 frame count and every `SCENE` number follow from that one constant.
 

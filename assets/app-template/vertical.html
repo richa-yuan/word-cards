@@ -526,7 +526,7 @@
 
   <div class="meter">
     <div class="ticks" id="ticks"></div>
-    <p class="count" id="count">00 / 24</p>
+    <p class="count" id="count">00 / 12</p>
   </div>
 
   <div class="strip-wrap">
@@ -631,7 +631,7 @@ function fitWord(){
 }
 window.__fit = fitAll;
 
-/* build the 24 ticks */
+/* build the 12 ticks */
 const ticks = DATA.map(() => {
   const t = document.createElement('i');
   t.className = 'tick';

@@ -2,7 +2,7 @@
 /* Prove the card app actually works before shipping it or rendering a video.
 
    node verify_app.cjs --url http://127.0.0.1:4317/ [--vertical URL]
-                       [--expect 24] [--cols 4] [--chrome PATH] [--shots DIR]
+                       [--expect 12] [--cols 4] [--chrome PATH] [--shots DIR]
 
    Checks the grid shape, every illustration, the modal + speech, autoplay, and
    (when given --vertical) sweeps the whole video timeline for NaN states.
@@ -17,7 +17,7 @@ const flag = (k, d) => { const i = argv.indexOf('--' + k); return i < 0 ? d : ar
 
 const URL_ = flag('url', 'http://127.0.0.1:4317/');
 const VERTICAL = flag('vertical', null);
-const EXPECT = Number(flag('expect', 24));
+const EXPECT = Number(flag('expect', 12));
 const COLS = Number(flag('cols', 4));
 const CHROME = flag('chrome', '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome');
 const SHOTS = flag('shots', null);
