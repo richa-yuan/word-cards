@@ -3,9 +3,13 @@
 
    node verify_app.cjs --url http://127.0.0.1:4317/ [--vertical URL]
                        [--expect 12] [--cols 4] [--chrome PATH] [--shots DIR]
+                       [--data PATH | --words "a,b,c"]
 
    Checks the grid shape, every illustration, the modal + speech, autoplay, and
    (when given --vertical) sweeps the whole video timeline for NaN states.
+   --data (project's assets/data.js) or --words asserts the SERVED word list
+   matches: a stale dev-server on the same port once passed all 13 checks
+   against a different word-cards project. Prefer passing --data every run.
    Prints a short PASS/FAIL report and exits non-zero on failure.
 */
 const fs = require('fs');
@@ -21,6 +25,17 @@ const EXPECT = Number(flag('expect', 12));
 const COLS = Number(flag('cols', 4));
 const CHROME = flag('chrome', '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome');
 const SHOTS = flag('shots', null);
+const DATA_PATH = flag('data', null);
+const WORDS_ARG = flag('words', null);
+
+// word list the page is SUPPOSED to serve — from the project's data.js or the CLI
+let wantWords = null;
+if (DATA_PATH) {
+  wantWords = [...fs.readFileSync(DATA_PATH, 'utf8').matchAll(/name\s*:\s*'([^']+)'/g)].map(m => m[1]);
+  if (!wantWords.length) { console.log('FAIL  no name:\'...\' entries found in ' + DATA_PATH); process.exit(1); }
+} else if (WORDS_ARG) {
+  wantWords = WORDS_ARG.split(',').map(s => s.trim()).filter(Boolean);
+}
 
 const results = [];
 const check = (name, ok, detail) => { results.push({ name, ok: !!ok, detail }); };
@@ -48,10 +63,18 @@ const check = (name, ok, detail) => { results.push({ name, ok: !!ok, detail }); 
       loaded: [...document.images].filter(i => i.complete && i.naturalWidth > 0).length,
       totalImgs: document.images.length,
       dataLen: typeof DATA !== 'undefined' ? DATA.length : -1,
+      names: typeof DATA !== 'undefined' ? DATA.map(d => d.name) : [],
       font: getComputedStyle(document.querySelector('.card-word')).fontFamily,
     };
   });
-  check('card count = ' + EXPECT, grid.n === EXPECT, grid.n + ' cards, DATA=' + grid.dataLen);
+  check('card count = ' + EXPECT, grid.n === EXPECT,
+    grid.n + ' cards, DATA=' + grid.dataLen + ', first word: ' + (grid.names[0] || '?'));
+  if (wantWords) {
+    const same = wantWords.length === grid.names.length && wantWords.every((w, i) => w === grid.names[i]);
+    check('word list identity (' + wantWords.length + ' words)', same,
+      same ? 'all match ' + (DATA_PATH ? DATA_PATH : '--words')
+           : 'expected [' + wantWords[0] + ' …], served [' + grid.names[0] + ' …] — wrong project on this port?');
+  }
   check(COLS + '-column grid', grid.cols === COLS, grid.cols + ' cols x ' + grid.rows + ' rows');
   check('all images decoded', grid.loaded === grid.totalImgs, grid.loaded + '/' + grid.totalImgs);
   check('self-hosted font applied', /Nunito/.test(grid.font), grid.font.split(',')[0]);

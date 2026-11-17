@@ -184,5 +184,8 @@ example sentence is **on screen but un-narrated** — reading it needs 4.5–5 s
 frame count and every `SCENE` number follow from that one constant.
 
 `build_audio.py` warns per card when a slot exceeds `dwell - 0.25`; treat those warnings as the
-go/no-go for the current pacing. There is no BGM in the delivered clip because no licensed
-source existed locally — ask before adding a track, and duck it ~12 dB under the voice.
+go/no-go for the current pacing — and fix the data before the pacing: a two-term gloss like
+「小心的；仔细的」 measured 3.29 s and blew the 3.0 s slot; shortening the gloss to 「小心的」
+brought it back under budget. Prefer trimming glosses over raising `DWELL`. There is no BGM in
+the delivered clip because no licensed source existed locally — ask before adding a track, and
+duck it ~12 dB under the voice.

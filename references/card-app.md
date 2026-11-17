@@ -103,4 +103,15 @@ shortening reveal delays.
   capture artifact. Verify with scrolled viewport shots plus
   `img.complete && img.naturalWidth > 0`.
 - Pick a non-obvious dev-server port; `4173`/`8000` collide with other projects
-  and you end up screenshotting a different app.
+  and you end up screenshotting a different app. This bit us with the skill's
+  *own* port: an old session's `http.server` still held `4317`, serving a
+  different word-cards project — all 13 checks passed against the wrong data
+  (the modal said `music`). Pass `--data <project>/assets/data.js` (or
+  `--words`) so `verify_app.cjs` asserts the served word list, and
+  `lsof -i :PORT` first if in doubt.
+- Hand-rolled card layouts (replicating a reference image, e.g. art-left /
+  text-right) hit three recurring bugs: the index badge hides behind the art
+  tile (DOM order / z-index — raise the badge), the intro's accent colour
+  stays the default while the first card uses a different one (sync the intro
+  accent with `DATA[0]`'s ACCENT), and `.mini` thumbnails with
+  `object-fit: cover` crop faces off the top — shift `object-position` up.
