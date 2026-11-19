@@ -1,28 +1,28 @@
 ---
 name: word-cards
-description: 单词卡片学习带发音 — 把任意一组单词做成可点击的图文学习卡片网页（自动发音、点击翻卡、?autoplay=1 顺序自动播放），并渲染成符合抖音竖屏规格的 1080×1920 视频。主题/语言不限，默认写实摄影插画 + Edge 神经语音，片头不显示单词数量。当用户需要英语单词卡/背诵卡/发音卡片、词汇学习网页、给单词配插画与音标与例句，或需要把卡片做成抖音/小红书竖屏短视频、儿童单词视频时使用；也可用于其他语言的卡片（改数据与发音即可）。
+description: 单词卡竖屏视频 — 把任意一组单词做成符合抖音竖屏规格的 1080×1920 视频（带配音、音标、中文、例句，片头口号 + 片尾关注引导）。主题/语言不限，默认写实摄影插画 + Edge 神经语音，片头不显示单词数量。当用户需要把单词做成抖音/小红书竖屏短视频、儿童单词视频、词汇学习视频时使用；也可用于其他语言的视频（改数据与发音即可）。本技能只产出视频，不产出网页。
 ---
 
 # Skill: word-cards
-# 单词卡片学习页 + 竖屏视频（word-cards）
+# 单词卡竖屏视频（word-cards）
 
 ## Overview
 
-一条流程产出两样东西：一个零构建的静态网页卡片应用（4 列网格 → 点击弹出大图卡，浏览器本地
-TTS 朗读 + 音标 + 中文 + 例句），以及一条由同一套数据渲染出的抖音竖屏视频（1080×1920，30fps，
-每卡停留 3 秒，带离线合成的英语+中文配音）。
+一条流程产出一样东西：一条由词表数据渲染出的抖音竖屏视频（1080×1920，30fps，每卡停留 3 秒，
+带离线合成的英语+中文配音）。
 
-两者共用 `assets/data.js` 里的一个 `DATA` 数组——改数据即同时改网页和视频，这是整套设计的核心。
+数据唯一来源是 `assets/data.js` 里的一个 `DATA` 数组——改数据即改视频。视频由竖屏场景页
+`vertical.html` 逐帧渲染而来；它是**渲染中间产物**，不交付给用户。本技能**不生成点读网页**
+（`index.html`），模板里若残留该文件，忽略或删掉即可，不要交付。
 
 **主题不限、语言不限**：词表由用户提供或共同商定（常见主题：四季天气、昆虫、饮品、家电、
-食物味道、医院、太阳系、动物园、学校……）。不凑数：用户说多少就做多少，4 的倍数排网格最好看，
-8～14 张是常见甜点区。做其他语言时只改 `data.js` 的例句与配音参数。
+食物味道、医院、太阳系、动物园、学校……）。不凑数：用户说多少就做多少，4～14 张是常见甜点区。
+做其他语言时只改 `data.js` 的例句与配音参数。
 
 ## When to use
 
-用户说"做单词卡 / 学习卡片 / 背单词网页 / 要点读发音 / 自动翻卡 / 做成抖音竖屏视频 /
-做个 XX 主题的单词视频"，或给一张设计参考图要求按图实现。只做网页不做视频时，跳过第 5–7 步；
-只要视频时仍要先跑通网页，因为它是数据的唯一来源。
+用户说"做单词卡视频 / 做成抖音竖屏视频 / 做个 XX 主题的单词视频 / 儿童单词视频"，或给一张
+设计参考图要求按图实现。用户要"背单词网页 / 点读卡片网页"时**不适用**——本技能只做视频。
 
 ## Dependencies（先自检，缺什么装什么）
 
@@ -34,7 +34,7 @@ python3 -c "import numpy,scipy,PIL" && ffmpeg -version | head -1 \
 say -v Samantha -o /tmp/_say_check.aiff "ok"
 ```
 
-- **playwright-core**（verify/截图用）：在本技能目录执行
+- **playwright-core**（逐帧捕获/验证用）：在本技能目录执行
   `npm install playwright-core --prefix <本技能目录>`，脚本会用 `_pw.cjs` 自动在
   脚本目录/工作目录向上找 `node_modules`；或 `NODE_PATH=<node_modules目录> node ...`。
 - **Chrome/Chromium**：渲染脚本默认用 macOS 的
@@ -42,7 +42,6 @@ say -v Samantha -o /tmp/_say_check.aiff "ok"
   其他平台/路径用 `--chrome <可执行文件路径>` 覆盖（Linux 传 chromium 即可）。
 - **edge-tts** 走网络（微软神经语音）；无网或非 macOS 时退回 `build_audio.py`（macOS `say`，
   时间轴一致，音色降一档）。`say` 自检要写到真实文件，`-o /dev/null` 会误报。
-- 语音合成发音网页用的是**浏览器本地 `speechSynthesis`**，不依赖以上任何服务。
 - **生图有两条路线，走之前必须先问用户**（见工作流第 3 步）：云端 ImageGen，或**本地 Draw Things**
   （macOS Apple Silicon，App 内置 HTTP API，离线、免费、无需 key）。用 Draw Things 需先在 App 里
   开启 API Server（Settings → Advanced → API Server：Server Online=ON / Protocol=HTTP /
@@ -50,14 +49,12 @@ say -v Samantha -o /tmp/_say_check.aiff "ok"
 
 ## 默认假设（用户没反对就照做，交付时一句话说明）
 
-- 卡片数 12（4 列 × 3 行）或用户指定；字段：单词 / IPA / 中文 / 英文例句 / 中文译文 / 插图。
-- 插图三条路线（见 `references/art-pipeline.md` 与 `references/photo-tile-variant.md`）：
+- 卡片数 24（4 列 × 6 行）或用户指定；字段：单词 / IPA / 中文 / 英文例句 / 中文译文 / 插图。
+- 插图两条路线（见 `references/art-pipeline.md` 与 `references/photo-tile-variant.md`）：
   1. **写实产品摄影风 + 白底抠图**（默认）：无缝纯白背景、柔光、无投影，2×2 网格批量生成后
      切片为透明 WebP（512 画布，44px 内边距）——适合**实体物品**（玩具、昆虫、水果）。
   2. **全幅实景照片 tile**：适合**自然现象、场景、饮品、电器**等白底抠不出来的词
      （白云贴白底会消失、彩虹拱会困白、雾雨雷没有实体）。模板改 3 处 CSS 即可，见变体文档。
-  3. **全幅 hero 版式**（用户要「图片占主要位置 / 吸引眼球」时）：照片通栏出血占卡片近一半，
-     文字档位整体缩小一档；游乐场所、商场等大场景主题验证过，见变体文档路线 C。
 - 中国用户默认**中国样式**：场景/人物类图直接在提示词里写中国场景与亚洲面孔
   （医院、学校、食堂等），避免生成西式场景后返工。车辆/瓶身类生成物常带乱码小字和假车牌，
   生成后放大检查，用邻近区域克隆修补（PIL 即可）。
@@ -88,9 +85,8 @@ say -v Samantha -o /tmp/_say_check.aiff "ok"
 cp -R assets/app-template/. <项目目录>/
 ```
 
-`index.html`（网页）与 `vertical.html`（竖屏演绎）已就绪，都从 `assets/data.js` 读 `DATA`。
-模板自带完整的 12 词玩具示例（写实插画 + 配套 WebP + 视觉），复制后立刻能跑通第 4 步验证——
-先确认环境没问题，再换成用户的词表。换词表时清空 `assets/img/`，否则旧图会残留成僵尸文件。
+只需要 `vertical.html` 和 `assets/`（data.js / fonts / img）。模板里的 `index.html` 是旧版点读页，
+本技能不生成、不交付，删掉或忽略。**不要清空 `assets/img/` 里的 `account-avatar.png`**（片尾头像）。
 
 **2. 写数据** — 用用户的词表重写 `assets/data.js`（字段照模板抄）：
 
@@ -103,12 +99,10 @@ const DATA = [ { name:'teddy bear', ipa:'/ˈtedi ber/', zh:'泰迪熊',
 IPA 用真音标字符（ˈ ˌ ə ɒ ː），别用拼音式重音；音标跟配音口音一致更自然（模板惯例是美音）。
 `img` 的 slug 要和 `name` 对齐，切片时无需映射表。
 分组主题（如"四季 + 天气"）把组名本身做成第一张卡：seasons 开头、weather 开头。
-**中文释义宁短勿长**：配音只读单词+中文，双词条释义（「小心的；仔细的」）实测 3.29s 超 3 秒停留
-——写数据时就用单词条；build_audio 报超时告警时优先砍释义，别急着加 DWELL。
 
-模板的可见文案是玩具主题的，换主题时连文案一起改，别只改数据（两处 `<title>`、页头、
-`aria-label`、页脚、弹窗默认内容、竖屏页品牌区、片头与片尾）。**建议**：把两页的主题文案
-集中成一次带断言的 Python 替换（找不到就报错，防止静默漏改）。
+模板的可见文案是玩具主题的，换主题时连文案一起改。**只需改 `vertical.html` 一处**（`<title>`、
+品牌区、舞台卡默认内容、片头 chips/kicker、count）。**建议**：把主题文案集中成一次带断言的
+Python 替换（找不到就报错，防止静默漏改）。
 
 **3. 生成插图** — **先问用户选哪条生图路线，别默认**：
 
@@ -128,32 +122,24 @@ IPA 用真音标字符（ˈ ˌ ə ɒ ː），别用拼音式重音；音标跟�
      （或先用现有 `slice_grid.py --manifest` 把网格登记好）。
 - **选 ImageGen**（云端路线，默认）：详见 `references/art-pipeline.md`（白底抠图路线）与
   `references/photo-tile-variant.md`（全幅照片路线）。生成后统一：裁掉右下角生成器水印
-  （**深度按图实测**：同一生成器的角标顶边批次间会漂，60–64px 会留残条，宁多裁并目检底边）
-  → WebP q88 入 `assets/img/`。批量接口常见限流（HTTP 429）：自动重试，
+  （通常裁底部 60–64px 即可）→ WebP q88 入 `assets/img/`。批量接口常见限流（HTTP 429）：自动重试，
   仍失败的任务**逐个补跑**，并复查 `batch_result.json` 的 success 标志，别只看日志尾部。
-  HTTP 402（余额不足）是计费问题，重试无效——换另一条生图路线并如实告知用户，别空转。
 
 两条路线最后都要：联络表（contact sheet）肉眼过一遍风格一致性与生成伪影，再往下走。
-**本地 Draw Things 生图完成后照常回到第 4 步验证网页，再走第 5–8 步渲染视频**——生图方式不影响
+**本地 Draw Things 生图完成后照常回到第 4 步验证场景，再走第 5–8 步渲染视频**——生图方式不影响
 后续流程，数据唯一来源始终是 `assets/data.js`。
 
-**4. 跑通网页** — 必须走 HTTP（`file://` 会让字体与截图检查失真）：
+**4. 验证竖屏场景** — 必须走 HTTP（`file://` 会让字体与截图检查失真）。用 `--video-only`
+只跑竖屏场景检查，不需要 `index.html`：
 
 ```bash
 python3 -m http.server 4317 --bind 127.0.0.1
-node scripts/verify_app.cjs --url http://127.0.0.1:4317/index.html \
-  --vertical http://127.0.0.1:4317/vertical.html --expect <卡片数> \
-  --data <项目>/assets/data.js
+node scripts/verify_app.cjs --vertical http://127.0.0.1:4317/vertical.html \
+  --video-only --expect <卡片数>
 ```
 
-`--data`（或 `--words "词1,词2,..."`）校验词表身份：端口被旧会话的 http.server 占用时，
-13 项检查会**全绿跑在别人的项目上**（真实发生过，靠弹窗出现词表里没有的词才发现）。
-端口存疑先 `lsof -i :4317`，或换个空闲端口。
-
-13 项检查（列数、图片解码、自托管字体、弹窗内容、方向键、Esc、自动播放、点击停止、
-`SCENE.TOTAL`、全时间轴 NaN 扫描、卡片落位、横向溢出，加词表身份校验）。**全绿再往下做**，
-否则视频里会复刻同样的缺陷。
-网页实现细节与踩坑（TTS 三个异步陷阱、FLIP 动画、类名冲突）见 `references/card-app.md`。
+5 项检查（图片解码、`SCENE.TOTAL`、全时间轴 NaN 扫描、卡片落位、横向溢出）。**全绿再往下做**，
+否则视频里会复刻同样的缺陷。竖屏场景契约见 `references/vertical-video.md`。
 
 **5. 预览竖屏帧** — 先看 2–5 帧，别急着全量捕获：
 
@@ -174,7 +160,7 @@ python3 scripts/build_audio_neural.py --data <项目>/assets/data.js --out /tmp/
 无网络时退回离线方案：`python3 scripts/build_audio.py --data ... --out /tmp/track.wav --outro-text "..."`。
 脚本会报出配音实际结束点和剩余视觉留白，留白不足 0.6 秒会告警——收尾句宁可短，也别贴着片尾。
 
-**7. 全量捕获 + 编码**（12 卡 ≈ 1 分钟捕获；视频约 48 秒 / 11MB）：
+**7. 全量捕获 + 编码**（24 卡 ≈ 2 分钟捕获；视频约 80 秒 / 18MB）：
 
 ```bash
 node scripts/render_frames.cjs --url http://127.0.0.1:4317/vertical.html \
@@ -184,50 +170,39 @@ bash scripts/encode.sh /tmp/frames /tmp/track.wav "<主题>单词卡-抖音竖�
 
 **8. 验收** — `encode.sh` 末尾会打印 `ffprobe` 结果，逐项确认：`yuv420p(tv, bt709/unknown/unknown)`、
 `h264 (High)`、30 fps、`aac LC 44100 Hz stereo`、`Duration` 与 `SCENE.TOTAL` 一致。再抽看片头、
-第 1 卡、中段、片尾 4 帧确认文字无 NaN/空位、片尾单词板长词不截断。视频规格与布局安全区见
+第 1 卡、中段、片尾 4 帧确认文字无 NaN/空位、长词不截断。视频规格与布局安全区见
 `references/vertical-video.md`。
 
 ## 踩坑清单（每条都真实付出过代价）
 
-- 片尾单词板单元格定宽，**超过 8 字符的词会被截断**（如 washing machine）——模板已内置按长度
-  缩字号的补丁，别删。
-- 生成器水印固定在右下角，白底抠图会把它留在切片里；全幅图的裁切深度**按图实测**——CogView
-  「AI生成」角标顶边实测到过底部上方 85px，固定裁 64px 会留残条（逐张量边界，或统一裁 84px
-  再目检底边；自动检测会把灰色内容误判成角标，可疑的要目视确认）。
-- **端口复用假绿**：4317 被旧会话的 http.server 占着，13 项全绿跑在**别人的项目**上——
-  verify 传 `--data <项目>/assets/data.js` 校验词表身份，端口存疑先 `lsof -i :4317` 或换空闲端口。
-- **商场/店铺/玩具店类主题，招牌是假字重灾区**：店招一整条假汉字（黑底浅色字）、车身徽标、
-  假车牌最常见。提示词逐条写明「纯色招牌无文字」「车身无徽标贴纸」，生成后网格叠加图定位 +
-  等高放大拼图逐个检查；黑底浅色字用颜色阈值掩膜 + dilate + TELEA inpaint 修，**大区块
-  inpaint 会糊，大缺陷（语义不清/文字过大）直接重生成**。检查标准：渲染尺寸（hero 约 0.66x）
-  下可读才算缺陷，货架小字/书脊纹理可放行。
+- 主卡长词（>820px）由 `fitWord()` 自动缩放，别删这个函数；片尾影集条长词也靠它兜底。
+- 生成器水印固定在右下角，白底抠图会把它留在切片里；全幅图直接裁底部 64px。
 - 中国样式：文化场景词直接用中国场景提示词；车辆/瓶子类必有乱码小字，生成后放大检查 + 克隆修补。
-- **形容词/抽象词靠对比构图**：反义成对、同类对比、差距拉到极端——柯基 vs 男孩比高矮不成立
-  （物种体型差干扰语义），两个男孩身高差拉满才一目了然；big=大象 vs 老鼠、small=瓢虫微距+指尖。
-- 换词表不清空 `assets/img/` 会留僵尸图；替换主题文案不带断言会静默漏改；替换片段**别跨 HTML
-  标签**（曾把 `</p>` 的 `<` 吃进替换，「今日主题 · 形容词/p>」直接上屏）——替换完 grep 一次
-  残留，预览帧兜底。
+- 换词表不清空 `assets/img/` 会留僵尸图；替换主题文案不带断言会静默漏改。
 - 清空 `assets/img/` 时**保留 `account-avatar.png`**，删了它片尾头像就是一张破图。
 - 预览帧抽在 0.1s 会看到卡片起飞半程——这是动画不是 bug，抽 t=卡内 1.6s 判断排版。
+- 单线程 `http.server` 并发捕获偶发 `ERR_CONNECTION_RESET`：重抽即可，不是图片坏。
 
 ## 交付时要说明的事
 
 配音只读单词和中文、例句未朗读（3 秒装不下，需 4.5–5 秒/卡，代价是片长翻倍）；无 BGM（本地无
-授权音源，可另找并压低 12dB）；视频配音是 Edge 神经语音（需联网，离线时退回系统 `say`），网页发音
-用浏览器本地合成，三者音色会不同。这三点是产品取舍，主动讲清楚，别等用户问。
+授权音源，可另找并压低 12dB）；配音是 Edge 神经语音（需联网，离线时退回系统 `say`）。这三点是
+产品取舍，主动讲清楚，别等用户问。**交付物只有 MP4，不交付网页。**
 
 ## Resources
 
-- `assets/app-template/` — 可运行的完整模板（index.html 网页、vertical.html 竖屏场景、
-  assets/data.js 12 词示例、assets/fonts 自托管字体、示例图）。复制即用。
-- `references/card-app.md` — 数据契约、响应式断点、TTS/FLIP/自动播放实现要点与已知坑。
+- `assets/app-template/` — 竖屏渲染模板（vertical.html + assets/data.js 词表示例 + fonts + 示例图）。
+  复制即用；其中的 index.html 为旧版遗留，不使用。
 - `references/vertical-video.md` — `seek(t)` 场景契约、时间轴数学、视觉规范、抖音安全区、
   编码参数、音频预算。
+- `references/card-app.md` — 历史参考：旧版点读网页的实现要点（本技能不产出网页，仅在需要
+  恢复网页功能时查阅）。
 - `references/art-pipeline.md` — 白底抠图路线：2×2 提示词模板、硬约束、切片参数、成品质检。
 - `references/photo-tile-variant.md` — 全幅照片 tile 路线：改哪 3 处 CSS、主题文案替换配方、
   生成限流/水印/车辆乱码的实战处理。
 - `references/draw-things.md` — 本地 Draw Things 路线：开启 API Server、manifest 写法、
   模型/steps/cfg 选择、健康检查与常见坑。
-- `scripts/` — `verify_app.cjs` `render_frames.cjs` `build_audio_neural.py` `build_audio.py`
-  `slice_grid.py` `draw_things_gen.py`（本地生图，HTTP 直连 7860）`encode.sh` `_pw.cjs`（依赖解析器）。
+- `scripts/` — `verify_app.cjs`（`--video-only` 竖屏场景检查）`render_frames.cjs`
+  `build_audio_neural.py` `build_audio.py` `slice_grid.py` `draw_things_gen.py`（本地生图，
+  HTTP 直连 7860）`encode.sh` `_pw.cjs`（依赖解析器）。
 - `package.json` — `npm install playwright-core` 用。
